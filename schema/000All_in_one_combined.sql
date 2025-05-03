@@ -111,3 +111,57 @@ CREATE TABLE saas_student_payment_transaction (
     -- register_student_id → saas_student_register.id
     -- fee_id → saas_cust_course_fee.id
 );
+
+-- Create the app_type table
+CREATE TABLE app_type (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255)
+);
+
+-- Create the user table
+CREATE TABLE user (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fullname VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    mobile VARCHAR(20),
+    role_id INT
+    -- Logical link: role_id -> role.id
+);
+
+-- Create the role table
+CREATE TABLE role (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    app_type_id INT
+    -- Logical link: app_type_id -> app_type.id
+);
+
+-- Create the role_feature table
+CREATE TABLE role_feature (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    role_id INT NOT NULL,
+    feature_id INT NOT NULL
+    -- Logical link: role_id -> role.id
+    -- Logical link: feature_id -> feature.id
+);
+
+-- Create the feature table
+CREATE TABLE feature (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    uri VARCHAR(255),
+    app_type INT
+    -- Logical link: app_type -> app_type.id
+);
+
+-- Create the saas_cust_user table
+CREATE TABLE saas_cust_user (
+    user_id INT NOT NULL,
+    saas_cust_id INT NOT NULL
+    -- Logical link: user_id -> user.id
+    -- Logical link: saas_cust_id -> saas_cust.id
+);
