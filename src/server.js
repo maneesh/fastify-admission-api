@@ -1,3 +1,6 @@
+require('dotenv').config();  // Load environment variables from .env file
+
+const jwt = require('jsonwebtoken');
 const fastify = require('fastify')({ logger: true });
 const connection = require('./db/connection');
 const studentRoutes = require('./routes/studentRoutes');
@@ -11,7 +14,7 @@ const saasCustCourseRoutes = require('./routes/saasCustCourseRoutes');
 const saasCustCourseFeeRoutes = require('./routes/saasCustCourseFeeRoutes');
 const saasStudentRegisterRoutes = require('./routes/saasStudentRegisterRoutes');
 const saasStudentPaymentTransactionRoutes = require('./routes/saasStudentPaymentTransactionRoutes');
-
+const userRoutes = require('./routes/userLoginRoutes');
 // Register routes
 fastify.register(studentRoutes);
 fastify.register(saasCustRoutes);
@@ -24,12 +27,15 @@ fastify.register(saasCustCourseRoutes);
 fastify.register(saasCustCourseFeeRoutes);
 fastify.register(saasStudentRegisterRoutes);
 fastify.register(saasStudentPaymentTransactionRoutes);
+fastify.register(userRoutes);
 
 // Declare a route
 fastify.get('/', async (request, reply) => {
   return { hello: 'world' }
 })
+const token = jwt.sign({ user_id: 1 }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
+console.log('Generated Token:', token);
 // Run the server!
 const start = async () => {
   try {
