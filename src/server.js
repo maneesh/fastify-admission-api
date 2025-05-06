@@ -1,8 +1,12 @@
-require('dotenv').config();  // Load environment variables from .env file
+require('dotenv').config(); // Load environment variables
 
 const jwt = require('jsonwebtoken');
 const fastify = require('fastify')({ logger: true });
+const cors = require('@fastify/cors');
+
 const connection = require('./db/connection');
+
+// Routes
 const studentRoutes = require('./routes/studentRoutes');
 const saasCustRoutes = require('./routes/saasCustRoutes');
 const custDetailsRoutes = require('./routes/custDetailsRoutes');
@@ -15,34 +19,46 @@ const saasCustCourseFeeRoutes = require('./routes/saasCustCourseFeeRoutes');
 const saasStudentRegisterRoutes = require('./routes/saasStudentRegisterRoutes');
 const saasStudentPaymentTransactionRoutes = require('./routes/saasStudentPaymentTransactionRoutes');
 const userRoutes = require('./routes/userLoginRoutes');
-// Register routes
-fastify.register(studentRoutes);
-fastify.register(saasCustRoutes);
-fastify.register(custDetailsRoutes);
-fastify.register(courseTypesRoutes);
-fastify.register(coursesRoutes);
-fastify.register(sessionRoutes);
-fastify.register(courseTypeYrSemRoutes);
-fastify.register(saasCustCourseRoutes);
-fastify.register(saasCustCourseFeeRoutes);
-fastify.register(saasStudentRegisterRoutes);
-fastify.register(saasStudentPaymentTransactionRoutes);
-fastify.register(userRoutes);
 
-// Declare a route
-fastify.get('/', async (request, reply) => {
-  return { hello: 'world' }
-})
-const token = jwt.sign({ user_id: 1 }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-console.log('Generated Token:', token);
-// Run the server!
+// Start server inside async function to avoid top-level await
 const start = async () => {
   try {
-    await fastify.listen({ port: 3000 })
+    // Register CORS
+    await fastify.register(cors, {
+      origin: true // or set to specific origin like 'http://localhost:5173'
+    });
+
+    // Register all routes under /saas prefix
+    fastify.register(async function (app) {
+      app.register(studentRoutes);
+      app.register(saasCustRoutes);
+      app.register(custDetailsRoutes);
+      app.register(courseTypesRoutes);
+      app.register(coursesRoutes);
+      app.register(sessionRoutes);
+      app.register(courseTypeYrSemRoutes);
+      app.register(saasCustCourseRoutes);
+      app.register(saasCustCourseFeeRoutes);
+      app.register(saasStudentRegisterRoutes);
+      app.register(saasStudentPaymentTransactionRoutes);
+      app.register(userRoutes);
+
+      // Optional root route under /saas/
+      app.get('/', async () => {
+        return { hello: 'world' };
+      });
+    }, { prefix: '/saas' });
+
+    // Token generation for testing/debugging
+    const token = jwt.sign({ user_id: 1 }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    console.log('Generated Token:', token);
+
+    // Start server
+    await fastify.listen({ port: 8080 });
   } catch (err) {
-    fastify.log.error(err)
-    process.exit(1)
+    fastify.log.error(err);
+    process.exit(1);
   }
-}
-start()
+};
+
+start();

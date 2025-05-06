@@ -16,7 +16,7 @@ exports.getAllUsers = async (req, res) => {
 
 exports.createUser = async (req, res) => {
   try {
-    const { fullname, email, mobile } = req.body;
+    const { school_name, email, mobile } = req.body;
 
     const existingUser = await User.findByEmail(email);
     if (existingUser) {
@@ -28,7 +28,7 @@ exports.createUser = async (req, res) => {
 
     // Save user with hashed password
     const newUser = await User.create({
-      fullname,
+      school_name,
       email,
       password: hashedPassword,
       mobile,
@@ -41,7 +41,7 @@ exports.createUser = async (req, res) => {
       message: "User created",
       user: {
         id: newUser.id,
-        fullname: newUser.fullname,
+        school_name: newUser.school_name,
         email: newUser.email,
         mobile: newUser.mobile,
         role_id: newUser.role_id,
@@ -79,7 +79,7 @@ exports.loginUser = async (req, res) => {
       token,
       user: {
         id: user.id,
-        fullname: user.fullname,
+        school_name: user.school_name,
         email: user.email,
         mobile: user.mobile,
         role_id: user.role_id,
