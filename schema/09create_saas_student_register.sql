@@ -13,7 +13,11 @@ CREATE TABLE saas_student_register (
     date_of_birth DATE,
     father_name VARCHAR(255),
     mother_name VARCHAR(255),
-    registration_num VARCHAR(100)
+    registration_num VARCHAR(100),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
     -- Logical links:
     -- cust_id → saas_cust.id
     -- course_id → courses.id
