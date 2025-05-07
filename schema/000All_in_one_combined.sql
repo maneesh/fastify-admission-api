@@ -5,7 +5,11 @@ USE manage_admission;
 -- 1 table for schools
 CREATE TABLE saas_cust (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
+    name VARCHAR(255) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
 );
 
 -- 2 School details
@@ -14,7 +18,11 @@ CREATE TABLE cust_details (
     cust_id INT NOT NULL,
     domain VARCHAR(255),
     api_key VARCHAR(255),
-    active_session INT
+    active_session INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
     -- Logical link: cust_id → saas_cust.id
 );
 
@@ -22,7 +30,11 @@ CREATE TABLE cust_details (
 CREATE TABLE course_types (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    short_name VARCHAR(50)
+    short_name VARCHAR(50),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
 );
 
 -- 4 All courses
@@ -31,7 +43,11 @@ CREATE TABLE courses (
     course_type INT NOT NULL,
     course_name VARCHAR(255) NOT NULL,
     years INT NOT NULL,
-    semesters INT NOT NULL
+    semesters INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
     -- Logical link: course_type → course_types.id
 );
 
@@ -41,7 +57,11 @@ CREATE TABLE session (
     academic_year VARCHAR(20) NOT NULL, -- e.g., 2025–2026
     admission_type ENUM('admission', 'post_admission') NOT NULL,
     start VARCHAR(50),
-    end VARCHAR(50)
+    end VARCHAR(50),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
 );
 
 -- 6 Course structure: year-wise or semester-wise
@@ -49,7 +69,11 @@ CREATE TABLE course_type_yr_sem (
     id INT AUTO_INCREMENT PRIMARY KEY,
     yr_sem_type ENUM('Year', 'Semester') NOT NULL,
     yr_sem VARCHAR(50) NOT NULL,         -- E.g., "1", "2"
-    display_name VARCHAR(100) NOT NULL   -- E.g., "Year 1", "Sem 2"
+    display_name VARCHAR(100) NOT NULL,  -- E.g., "Year 1", "Sem 2"
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
 );
 
 -- 7 Courses assigned to schools
@@ -59,7 +83,11 @@ CREATE TABLE saas_cust_course (
     course_id INT NOT NULL,
     course_display VARCHAR(255),       -- E.g., "B.Sc Maths"
     year_sem_type ENUM('Year', 'Semester'),
-    reg_enabled BOOLEAN DEFAULT FALSE
+    reg_enabled BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
     -- Logical link: saas_cust_id → saas_cust.id
     -- Logical link: course_id → courses.id
 );
@@ -73,7 +101,9 @@ CREATE TABLE saas_cust_course_fee (
     categery VARCHAR(100),
     updated_by VARCHAR(100),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
     -- Logical link: saas_cust_id → saas_cust.id
 );
 
@@ -90,7 +120,11 @@ CREATE TABLE saas_student_register (
     date_of_birth DATE,
     father_name VARCHAR(255),
     mother_name VARCHAR(255),
-    registration_num VARCHAR(100)
+    registration_num VARCHAR(100),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
     -- Logical links:
     -- cust_id → saas_cust.id
     -- course_id → courses.id
@@ -106,7 +140,11 @@ CREATE TABLE saas_student_payment_transaction (
     gateway_transaction_id VARCHAR(255),
     status VARCHAR(100),                 -- e.g. "Success", "Failed", "Pending"
     amount DECIMAL(10,2),
-    fee_id INT
+    fee_id INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
     -- Logical links:
     -- register_student_id → saas_student_register.id
     -- fee_id → saas_cust_course_fee.id
@@ -118,7 +156,8 @@ CREATE TABLE app_type (
     name VARCHAR(255) NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    created_by VARCHAR(255)
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
 );
 
 -- Create the user table
@@ -128,7 +167,11 @@ CREATE TABLE user (
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     mobile VARCHAR(20),
-    role_id INT
+    role_id INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
     -- Logical link: role_id -> role.id
 );
 
@@ -136,7 +179,11 @@ CREATE TABLE user (
 CREATE TABLE role (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    app_type_id INT
+    app_type_id INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
     -- Logical link: app_type_id -> app_type.id
 );
 
@@ -144,7 +191,11 @@ CREATE TABLE role (
 CREATE TABLE role_feature (
     id INT AUTO_INCREMENT PRIMARY KEY,
     role_id INT NOT NULL,
-    feature_id INT NOT NULL
+    feature_id INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
     -- Logical link: role_id -> role.id
     -- Logical link: feature_id -> feature.id
 );
@@ -154,14 +205,22 @@ CREATE TABLE feature (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     uri VARCHAR(255),
-    app_type INT
+    app_type INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
     -- Logical link: app_type -> app_type.id
 );
 
 -- Create the saas_cust_user table
 CREATE TABLE saas_cust_user (
-    user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    saas_cust_id INT NOT NULL
+    user_id INT NOT NULL,
+    saas_cust_id INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
     -- Logical link: user_id -> user.id
     -- Logical link: saas_cust_id -> saas_cust.id
 );

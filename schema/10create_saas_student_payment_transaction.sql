@@ -8,7 +8,11 @@ CREATE TABLE saas_student_payment_transaction (
     gateway_transaction_id VARCHAR(255),
     status VARCHAR(100),                 -- e.g., "Success", "Failed", "Pending"
     amount DECIMAL(10,2),
-    fee_id INT
+    fee_id INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
     -- Logical links:
     -- register_student_id → saas_student_register.id
     -- fee_id → saas_cust_course_fee.id
