@@ -3,45 +3,35 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('saas_student_payment_transaction', {
+    await queryInterface.createTable('saas_cust_course_fee', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      register_student_id: {
+      saas_cust_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'saas_student_register',
-          key: 'id'
-        }
+        allowNull: false
       },
-      start_date_time: {
-        type: Sequelize.DATE
-      },
-      gateway_transaction_id: {
-        type: Sequelize.STRING
-      },
-      status: {
+      fee_type: {
         type: Sequelize.STRING
       },
       amount: {
         type: Sequelize.DECIMAL(10, 2)
       },
-      fee_id: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'saas_cust_course_fee',
-          key: 'id'
-        }
+      categery: {
+        type: Sequelize.STRING
       },
       created_at: {
-        type: Sequelize.DATE
+        allowNull: false,
+        type: Sequelize.DataTypes.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updated_at: {
-        type: Sequelize.DATE
+        allowNull: false,
+        type: Sequelize.DataTypes.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
       },
       created_by: {
         type: Sequelize.STRING
@@ -51,7 +41,8 @@ module.exports = {
       }
     });
   },
+
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('saas_student_payment_transaction');
+    await queryInterface.dropTable('saas_cust_course_fee');
   }
 };

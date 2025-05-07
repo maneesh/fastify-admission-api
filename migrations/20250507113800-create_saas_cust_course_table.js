@@ -12,19 +12,11 @@ module.exports = {
       },
       saas_cust_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'saas_cust',
-          key: 'id'
-        }
+        allowNull: false
       },
       course_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'courses',
-          key: 'id'
-        }
+        allowNull: false
       },
       course_display: {
         type: Sequelize.STRING
@@ -37,10 +29,14 @@ module.exports = {
         defaultValue: false
       },
       created_at: {
-        type: Sequelize.DATE
+        allowNull: false,
+        type: Sequelize.DataTypes.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updated_at: {
-        type: Sequelize.DATE
+        allowNull: false,
+        type: Sequelize.DataTypes.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
       },
       created_by: {
         type: Sequelize.STRING

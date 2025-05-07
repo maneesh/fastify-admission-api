@@ -12,35 +12,19 @@ module.exports = {
       },
       cust_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'saas_cust',
-          key: 'id'
-        }
+        allowNull: false
       },
       course_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'courses',
-          key: 'id'
-        }
+        allowNull: false
       },
       year_sem_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-         references: {
-          model: 'course_type_yr_sem',
-          key: 'id'
-        }
+        allowNull: false
       },
       register_session: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-         references: {
-          model: 'session',
-          key: 'id'
-        }
+        allowNull: false
       },
       full_name: {
         type: Sequelize.STRING
@@ -64,10 +48,14 @@ module.exports = {
         type: Sequelize.STRING
       },
       created_at: {
-        type: Sequelize.DATE
+        allowNull: false,
+        type: Sequelize.DataTypes.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updated_at: {
-        type: Sequelize.DATE
+        allowNull: false,
+        type: Sequelize.DataTypes.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
       },
       created_by: {
         type: Sequelize.STRING
@@ -77,6 +65,7 @@ module.exports = {
       }
     });
   },
+
   async down (queryInterface, Sequelize) {
     await queryInterface.dropTable('saas_student_register');
   }

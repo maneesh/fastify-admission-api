@@ -3,32 +3,35 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('session', {
+    await queryInterface.createTable('cust_details', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      academic_year: {
-        type: Sequelize.STRING,
+      cust_id: {
+        type: Sequelize.INTEGER,
         allowNull: false
       },
-      admission_type: {
-        type: Sequelize.ENUM('admission', 'post_admission'),
-        allowNull: false
-      },
-      start: {
+      domain: {
         type: Sequelize.STRING
       },
-      end: {
+      api_key: {
         type: Sequelize.STRING
+      },
+      active_session: {
+        type: Sequelize.INTEGER
       },
       created_at: {
-        type: Sequelize.DATE
+        allowNull: false,
+        type: Sequelize.DataTypes.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updated_at: {
-        type: Sequelize.DATE
+        allowNull: false,
+        type: Sequelize.DataTypes.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
       },
       created_by: {
         type: Sequelize.STRING
@@ -40,6 +43,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('session');
+    await queryInterface.dropTable('cust_details');
   }
 };

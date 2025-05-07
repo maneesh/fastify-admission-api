@@ -3,38 +3,34 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('courses', {
+    await queryInterface.createTable('course_type_yr_sem', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      course_type: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'course_types',
-          key: 'id'
-        }
+      yr_sem_type: {
+        type: Sequelize.ENUM('Year', 'Semester'),
+        allowNull: false
       },
-      course_name: {
+      yr_sem: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      years: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-      },
-      semesters: {
-        type: Sequelize.INTEGER,
+      display_name: {
+        type: Sequelize.STRING,
         allowNull: false
       },
       created_at: {
-        type: Sequelize.DATE
+        allowNull: false,
+        type: Sequelize.DataTypes.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updated_at: {
-        type: Sequelize.DATE
+        allowNull: false,
+        type: Sequelize.DataTypes.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
       },
       created_by: {
         type: Sequelize.STRING
@@ -46,6 +42,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('courses');
+    await queryInterface.dropTable('course_type_yr_sem');
   }
 };
