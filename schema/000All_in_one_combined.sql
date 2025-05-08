@@ -163,7 +163,7 @@ CREATE TABLE app_type (
 -- Create the user table
 CREATE TABLE user (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    school_name VARCHAR(255) NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     mobile VARCHAR(20),

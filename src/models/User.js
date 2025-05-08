@@ -1,10 +1,11 @@
 const bcrypt = require('bcryptjs');
-const connection = require('../db/connection');
+const connection = require('../db/connection'); 
+const { Sequelize } = require('sequelize');
 
 class User {
-  constructor(id, school_name, email, password, mobile, role_id) {
+  constructor(id, full_name, email, password, mobile, role_id) {
     this.id = id;
-    this.school_name = school_name;
+    this.full_name = full_name;
     this.email = email;
     this.password = password;
     this.mobile = mobile;
@@ -12,42 +13,87 @@ class User {
   }
 
   static async getAll() {
-    const [rows] = await connection.query('SELECT * FROM user');
-    return rows.map(row => new User(row.id, row.school_name, row.email, row.password, row.mobile, row.role_id));
-  }
-
-  static async create({ school_name, email, mobile }) {
-    const existing = await this.findByEmail(email);
-    if (existing) {
-      throw new Error('Email already exists');
+    try {
+      const [rows] = await connection.query('SELECT * FROM user');
+      return rows.map(
+        (row) =>
+          new User(
+            row.id,
+            row.full_name,
+            row.email,
+            row.password,
+            row.mobile,
+            row.role_id
+          )
+      );
+    } catch (err) {
+      console.error('Error fetching users:', err.message);
+      throw err;
     }
-
-    const defaultPassword = 'Ravi@555';
-    const hashedPassword = await bcrypt.hash(defaultPassword, 10);
-    const role_id = 1;
-
-    const [result] = await connection.query(
-      'INSERT INTO user (school_name, email, password, mobile, role_id) VALUES (?, ?, ?, ?, ?)',
-      [school_name, email, hashedPassword, mobile, role_id]
-    );
-
-    return {
-      id: result.insertId,
-      school_name,
-      email,
-      mobile,
-      role_id
-      // Do NOT return the password here for security
-    };
   }
 
   static async findByEmail(email) {
-    const [rows] = await connection.query('SELECT * FROM user WHERE email = ?', [email]);
-    if (rows.length === 0) return null;
+    try {
+      const rows = await connection.query(
+        'SELECT * FROM user WHERE email = ?',
+        {
+          replacements: [email],
+          type: Sequelize.QueryTypes.SELECT,
+        }
+      );
+      if (rows.length === 0) return null;
 
-    const row = rows[0];
-    return new User(row.id, row.school_name, row.email, row.password, row.mobile, row.role_id);
+      const row = rows[0];
+      return new User(
+        row.id,
+        row.full_name,
+        row.email,
+        row.password,
+        row.mobile,
+        row.role_id
+      );
+    } catch (err) {
+      console.error('Error finding user by email:', err.message);
+      throw err;
+    }
   }
+
+  static async create({ full_name, email, password, mobile, role_id }) {
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      const query = `
+        INSERT INTO user (full_name, email, password, mobile, role_id, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      `;
+      const values = [full_name, email, hashedPassword, mobile, role_id];
+  
+      // Execute the query
+      const [insertId] = await connection.query(query, { replacements: values });
+  
+      // Debugging log
+      console.log("Insert ID (from MySQL):", insertId);
+  
+      // If insertId is a number, use it directly
+      if (typeof insertId !== "number") {
+        throw new Error("User creation failed");
+      }
+  
+      return {
+        id: insertId,
+        full_name,
+        email,
+        mobile,
+        role_id,
+      };
+    } catch (err) {
+      console.error("Error creating user:", err.message);
+      throw err;
+    }
+  }
+  
+  
+  
 }
 
 module.exports = User;

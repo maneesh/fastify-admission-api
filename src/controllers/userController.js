@@ -1,61 +1,56 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
-const SaasCustUser = require("../models/SaasCustUser");
+const SaasCust = require("../models/SaasCust");
 const JWT_SECRET = process.env.JWT_SECRET || "yourSuperSecretKey12345";
+const connection = require('../db/connection'); 
+const { Sequelize } = require('sequelize');
 
+// GET all users
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.getAll();
-    res.send(users);
+    res.status(200).send(users);
   } catch (err) {
     console.error("Get Users Error:", err.message);
     res.status(500).send({ message: "Error retrieving users" });
   }
 };
 
+// CREATE a user
 exports.createUser = async (req, res) => {
   try {
-    const { school_name, email, mobile } = req.body;
+    const { full_name, email, mobile,name } = req.body;
 
     const existingUser = await User.findByEmail(email);
     if (existingUser) {
       return res.status(400).send({ message: "Email already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash("Ravi@555", 10);
+    const password = "Ravi@555";
     const role_id = 1;
 
-    // Save user with hashed password
     const newUser = await User.create({
-      school_name,
+      full_name,
       email,
-      password: hashedPassword,
+      password,
       mobile,
       role_id,
     });
-    await SaasCustUser.create({ saas_cust_id: newUser.id });
-
-    // Respond with user data including hashed password
+    const newSaasCust =  await SaasCust.create(name);
+    console.log('Created SaasCust:', newSaasCust);
     res.status(200).send({
-      message: "User created",
-      user: {
-        id: newUser.id,
-        school_name: newUser.school_name,
-        email: newUser.email,
-        mobile: newUser.mobile,
-        role_id: newUser.role_id,
-        password: hashedPassword,
-      },
+      message: "User created successfully",
+      user: newUser,
+     //saasCust: newSaasCust
     });
   } catch (err) {
     console.error("Create User Error:", err.message);
-    res
-      .status(500)
-      .send({ message: "Error creating user", error: err.message });
+    res.status(500).send({ message: "Error creating user", error: err.message });
   }
 };
 
+// LOGIN user
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -73,20 +68,29 @@ exports.loginUser = async (req, res) => {
     const token = jwt.sign({ user_id: user.id }, JWT_SECRET, {
       expiresIn: "1h",
     });
-
+    const [features] = await connection.query(
+      `SELECT DISTINCT f.name 
+       FROM feature f
+       JOIN role_feature rf ON rf.feature_id = f.id
+       WHERE rf.role_id = ?`,
+      {
+        replacements: [user.role_id],
+      }
+    );
+    
     res.send({
       message: "Login successful",
       token,
       user: {
         id: user.id,
-        school_name: user.school_name,
+        full_name: user.full_name,
         email: user.email,
         mobile: user.mobile,
         role_id: user.role_id,
-      },
+        name:user.name,
+        features: features.map(f => f.name)      },
     });
   } catch (err) {
     console.error("Login Error:", err.message);
     res.status(500).send({ message: "Error logging in", error: err.message });
-  }
-};
+  }}

@@ -1,5 +1,5 @@
 const connection = require('../db/connection');
-
+const { Sequelize } = require('sequelize');
 class SaasCust {
   constructor(id, name) {
     this.id = id;
@@ -20,11 +20,32 @@ class SaasCust {
     return new SaasCust(row.id, row.name);
   }
 
-  static async create(name) {
-    const [result] = await connection.query('INSERT INTO saas_cust (name) VALUES (?)', [name]);
-    const id = result.insertId;
-    return new SaasCust(id, name);
+ // Corrected SaasCust.create() method
+// Corrected SaasCust create method
+static async create(name) {
+  try {
+    // Create a SaaS customer using Sequelize's `create`
+    const saasCust = await connection.query(
+      'INSERT INTO saas_cust (name, created_at, updated_at) VALUES (?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)', 
+      {
+        replacements: [name],
+        type: Sequelize.QueryTypes.INSERT
+      }
+    );
+
+    // Log the inserted data
+    console.log('SaaS customer created successfully:', saasCust);
+    return saasCust; // Return the result from the query
+  } catch (error) {
+    console.error('Error executing query:', error.message);
+    throw error; // Ensure error is propagated
   }
+}
+
+
+  
+  
+  
 
   static async update(id, name) {
     await connection.query('UPDATE saas_cust SET name = ? WHERE id = ?', [name, id]);
