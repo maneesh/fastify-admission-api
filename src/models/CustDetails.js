@@ -1,4 +1,5 @@
-const connection = require('../db/connection');
+const mysql = require('mysql2/promise');
+const config = require('../../postgrator-config');
 
 class CustDetails {
   constructor(id, cust_id, domain, api_key, active_session) {
@@ -10,32 +11,57 @@ class CustDetails {
   }
 
   static async getAll() {
-    const [rows] = await connection.query('SELECT * FROM cust_details');
-    return rows.map(row => new CustDetails(row.id, row.cust_id, row.domain, row.api_key, row.active_session));
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      const [rows] = await connection.execute('SELECT * FROM cust_details');
+      return rows.map(row => new CustDetails(row.id, row.cust_id, row.domain, row.api_key, row.active_session));
+    } finally {
+      await connection.end();
+    }
   }
 
   static async getById(id) {
-    const [rows] = await connection.query('SELECT * FROM cust_details WHERE id = ?', [id]);
-    if (rows.length === 0) {
-      return null;
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      const [rows] = await connection.execute('SELECT * FROM cust_details WHERE id = ?', [id]);
+      if (rows.length === 0) {
+        return null;
+      }
+      const row = rows[0];
+      return new CustDetails(row.id, row.cust_id, row.domain, row.api_key, row.active_session);
+    } finally {
+      await connection.end();
     }
-    const row = rows[0];
-    return new CustDetails(row.id, row.cust_id, row.domain, row.api_key, row.active_session);
   }
 
   static async create(cust_id, domain, api_key, active_session) {
-    const [result] = await connection.query('INSERT INTO cust_details (cust_id, domain, api_key, active_session) VALUES (?, ?, ?, ?)', [cust_id, domain, api_key, active_session]);
-    const id = result.insertId;
-    return new CustDetails(id, cust_id, domain, api_key, active_session);
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      const [result] = await connection.execute('INSERT INTO cust_details (cust_id, domain, api_key, active_session) VALUES (?, ?, ?, ?)', [cust_id, domain, api_key, active_session]);
+      const id = result[0].insertId;
+      return new CustDetails(id, cust_id, domain, api_key, active_session);
+    } finally {
+      await connection.end();
+    }
   }
 
   static async update(id, cust_id, domain, api_key, active_session) {
-    await connection.query('UPDATE cust_details SET cust_id = ?, domain = ?, api_key = ?, active_session = ? WHERE id = ?', [cust_id, domain, api_key, active_session, id]);
-    return new CustDetails(id, cust_id, domain, api_key, active_session);
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      await connection.execute('UPDATE cust_details SET cust_id = ?, domain = ?, api_key = ?, active_session = ? WHERE id = ?', [cust_id, domain, api_key, active_session, id]);
+      return new CustDetails(id, cust_id, domain, api_key, active_session);
+    } finally {
+      await connection.end();
+    }
   }
 
   static async delete(id) {
-    await connection.query('DELETE FROM cust_details WHERE id = ?', [id]);
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      await connection.execute('DELETE FROM cust_details WHERE id = ?', [id]);
+    } finally {
+      await connection.end();
+    }
   }
 }
 

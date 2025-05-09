@@ -1,0 +1,11 @@
+CREATE TABLE saas_cust_course_fee (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  saas_cust_id INT NOT NULL,
+  fee_type VARCHAR(255),
+  amount DECIMAL(10, 2),
+  categery VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  created_by VARCHAR(255),
+  updated_by VARCHAR(255)
+);

@@ -1,0 +1,1 @@
+DROP TABLE saas_student_register;
