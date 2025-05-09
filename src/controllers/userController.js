@@ -4,7 +4,6 @@ const User = require("../models/User");
 const SaasCust = require("../models/SaasCust");
 const JWT_SECRET = process.env.JWT_SECRET || "yourSuperSecretKey12345";
 const connection = require('../db/connection'); 
-const { Sequelize } = require('sequelize');
 
 // GET all users
 exports.getAllUsers = async (req, res) => {

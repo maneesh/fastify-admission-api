@@ -1,4 +1,5 @@
-const connection = require('../db/connection');
+const mysql = require('mysql2/promise');
+const config = require('../../postgrator-config');
 
 class Session {
   constructor(id, academic_year, admission_type, start, end) {
@@ -10,32 +11,57 @@ class Session {
   }
 
   static async getAll() {
-    const [rows] = await connection.query('SELECT * FROM session');
-    return rows.map(row => new Session(row.id, row.academic_year, row.admission_type, row.start, row.end));
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      const [rows] = await connection.execute('SELECT * FROM session');
+      return rows.map(row => new Session(row.id, row.academic_year, row.admission_type, row.start, row.end));
+    } finally {
+      await connection.end();
+    }
   }
 
   static async getById(id) {
-    const [rows] = await connection.query('SELECT * FROM session WHERE id = ?', [id]);
-    if (rows.length === 0) {
-      return null;
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      const [rows] = await connection.execute('SELECT * FROM session WHERE id = ?', [id]);
+      if (rows.length === 0) {
+        return null;
+      }
+      const row = rows[0];
+      return new Session(row.id, row.academic_year, row.admission_type, row.start, row.end);
+    } finally {
+      await connection.end();
     }
-    const row = rows[0];
-    return new Session(row.id, row.academic_year, row.admission_type, row.start, row.end);
   }
 
   static async create(academic_year, admission_type, start, end) {
-    const [result] = await connection.query('INSERT INTO session (academic_year, admission_type, start, end) VALUES (?, ?, ?, ?)', [academic_year, admission_type, start, end]);
-    const id = result.insertId;
-    return new Session(id, academic_year, admission_type, start, end);
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      const [result] = await connection.execute('INSERT INTO session (academic_year, admission_type, start, end) VALUES (?, ?, ?, ?)', [academic_year, admission_type, start, end]);
+      const id = result[0].insertId;
+      return new Session(id, academic_year, admission_type, start, end);
+    } finally {
+      await connection.end();
+    }
   }
 
   static async update(id, academic_year, admission_type, start, end) {
-    await connection.query('UPDATE session SET academic_year = ?, admission_type = ?, start = ?, end = ? WHERE id = ?', [academic_year, admission_type, start, end, id]);
-    return new Session(id, academic_year, admission_type, start, end);
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      await connection.execute('UPDATE session SET academic_year = ?, admission_type = ?, start = ?, end = ? WHERE id = ?', [academic_year, admission_type, start, end, id]);
+      return new Session(id, academic_year, admission_type, start, end);
+    } finally {
+      await connection.end();
+    }
   }
 
   static async delete(id) {
-    await connection.query('DELETE FROM session WHERE id = ?', [id]);
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      await connection.execute('DELETE FROM session WHERE id = ?', [id]);
+    } finally {
+      await connection.end();
+    }
   }
 }
 

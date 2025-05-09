@@ -1,4 +1,5 @@
-const connection = require('../db/connection');
+const mysql = require('mysql2/promise');
+const config = require('../../postgrator-config');
 
 class SaasCustCourseFee {
   constructor(id, saas_cust_id, fee_type, amount, categery, updated_by, created_at, updated_at) {
@@ -13,32 +14,57 @@ class SaasCustCourseFee {
   }
 
   static async getAll() {
-    const [rows] = await connection.query('SELECT * FROM saas_cust_course_fee');
-    return rows.map(row => new SaasCustCourseFee(row.id, row.saas_cust_id, row.fee_type, row.amount, row.categery, row.updated_by, row.created_at, row.updated_at));
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      const [rows] = await connection.execute('SELECT * FROM saas_cust_course_fee');
+      return rows.map(row => new SaasCustCourseFee(row.id, row.saas_cust_id, row.fee_type, row.amount, row.categery, row.updated_by, row.created_at, row.updated_at));
+    } finally {
+      await connection.end();
+    }
   }
 
   static async getById(id) {
-    const [rows] = await connection.query('SELECT * FROM saas_cust_course_fee WHERE id = ?', [id]);
-    if (rows.length === 0) {
-      return null;
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      const [rows] = await connection.execute('SELECT * FROM saas_cust_course_fee WHERE id = ?', [id]);
+      if (rows.length === 0) {
+        return null;
+      }
+      const row = rows[0];
+      return new SaasCustCourseFee(row.id, row.saas_cust_id, row.fee_type, row.amount, row.categery, row.updated_by, row.created_at, row.updated_at);
+    } finally {
+      await connection.end();
     }
-    const row = rows[0];
-    return new SaasCustCourseFee(row.id, row.saas_cust_id, row.fee_type, row.amount, row.categery, row.updated_by, row.created_at, row.updated_at);
   }
 
   static async create(saas_cust_id, fee_type, amount, categery, updated_by) {
-    const [result] = await connection.query('INSERT INTO saas_cust_course_fee (saas_cust_id, fee_type, amount, categery, updated_by) VALUES (?, ?, ?, ?, ?)', [saas_cust_id, fee_type, amount, categery, updated_by]);
-    const id = result.insertId;
-    return new SaasCustCourseFee(id, saas_cust_id, fee_type, amount, categery, updated_by);
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      const [result] = await connection.execute('INSERT INTO saas_cust_course_fee (saas_cust_id, fee_type, amount, categery, updated_by) VALUES (?, ?, ?, ?, ?)', [saas_cust_id, fee_type, amount, categery, updated_by]);
+      const id = result[0].insertId;
+      return new SaasCustCourseFee(id, saas_cust_id, fee_type, amount, categery, updated_by);
+    } finally {
+      await connection.end();
+    }
   }
 
   static async update(id, saas_cust_id, fee_type, amount, categery, updated_by) {
-    await connection.query('UPDATE saas_cust_course_fee SET saas_cust_id = ?, fee_type = ?, amount = ?, categery = ?, updated_by = ? WHERE id = ?', [saas_cust_id, fee_type, amount, categery, updated_by, id]);
-    return new SaasCustCourseFee(id, saas_cust_id, fee_type, amount, categery, updated_by);
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      await connection.execute('UPDATE saas_cust_course_fee SET saas_cust_id = ?, fee_type = ?, amount = ?, categery = ?, updated_by = ? WHERE id = ?', [saas_cust_id, fee_type, amount, categery, updated_by, id]);
+      return new SaasCustCourseFee(id, saas_cust_id, fee_type, amount, categery, updated_by);
+    } finally {
+      await connection.end();
+    }
   }
 
   static async delete(id) {
-    await connection.query('DELETE FROM saas_cust_course_fee WHERE id = ?', [id]);
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      await connection.execute('DELETE FROM saas_cust_course_fee WHERE id = ?', [id]);
+    } finally {
+      await connection.end();
+    }
   }
 }
 

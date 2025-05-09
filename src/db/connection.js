@@ -1,10 +1,15 @@
 require('dotenv').config();
-const { Sequelize } = require('sequelize');
-const config = require('../../config/config.json')['development'];  // ← fixed path
+const mysql = require('mysql2/promise');
+const config = require('../../config/config.json')['development'];
 
-const sequelize = new Sequelize(config.database, config.username, config.password, {
+const pool = mysql.createPool({
   host: config.host,
-  dialect: config.dialect
+  user: config.username,
+  password: config.password,
+  database: config.database,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-module.exports = sequelize;
+module.exports = pool;

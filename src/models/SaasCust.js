@@ -1,5 +1,6 @@
-const connection = require('../db/connection');
-const { Sequelize } = require('sequelize');
+const mysql = require('mysql2/promise');
+const config = require('../../postgrator-config');
+
 class SaasCust {
   constructor(id, name) {
     this.id = id;
@@ -7,53 +8,57 @@ class SaasCust {
   }
 
   static async getAll() {
-    const [rows] = await connection.query('SELECT * FROM saas_cust');
-    return rows.map(row => new SaasCust(row.id, row.name));
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      const [rows] = await connection.execute('SELECT * FROM saas_cust');
+      return rows.map(row => new SaasCust(row.id, row.name));
+    } finally {
+      await connection.end();
+    }
   }
 
   static async getById(id) {
-    const [rows] = await connection.query('SELECT * FROM saas_cust WHERE id = ?', [id]);
-    if (rows.length === 0) {
-      return null;
-    }
-    const row = rows[0];
-    return new SaasCust(row.id, row.name);
-  }
-
- // Corrected SaasCust.create() method
-// Corrected SaasCust create method
-static async create(name) {
-  try {
-    // Create a SaaS customer using Sequelize's `create`
-    const saasCust = await connection.query(
-      'INSERT INTO saas_cust (name, created_at, updated_at) VALUES (?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)', 
-      {
-        replacements: [name],
-        type: Sequelize.QueryTypes.INSERT
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      const [rows] = await connection.execute('SELECT * FROM saas_cust WHERE id = ?', [id]);
+      if (rows.length === 0) {
+        return null;
       }
-    );
-
-    // Log the inserted data
-    console.log('SaaS customer created successfully:', saasCust);
-    return saasCust; // Return the result from the query
-  } catch (error) {
-    console.error('Error executing query:', error.message);
-    throw error; // Ensure error is propagated
+      const row = rows[0];
+      return new SaasCust(row.id, row.name);
+    } finally {
+      await connection.end();
+    }
   }
-}
 
-
-  
-  
-  
+  static async create(name) {
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      const [result] = await connection.execute('INSERT INTO saas_cust (name) VALUES (?)', [name]);
+      const id = result[0].insertId;
+      return new SaasCust(id, name);
+    } finally {
+      await connection.end();
+    }
+  }
 
   static async update(id, name) {
-    await connection.query('UPDATE saas_cust SET name = ? WHERE id = ?', [name, id]);
-    return new SaasCust(id, name);
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      await connection.execute('UPDATE saas_cust SET name = ? WHERE id = ?', [name, id]);
+      return new SaasCust(id, name);
+    } finally {
+      await connection.end();
+    }
   }
 
   static async delete(id) {
-    await connection.query('DELETE FROM saas_cust WHERE id = ?', [id]);
+    const connection = await mysql.createConnection(config.connectionString);
+    try {
+      await connection.execute('DELETE FROM saas_cust WHERE id = ?', [id]);
+    } finally {
+      await connection.end();
+    }
   }
 }
 

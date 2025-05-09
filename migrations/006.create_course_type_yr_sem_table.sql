@@ -1,0 +1,10 @@
+CREATE TABLE course_type_yr_sem (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  yr_sem_type ENUM('Year', 'Semester') NOT NULL,
+  yr_sem VARCHAR(255) NOT NULL,
+  display_name VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  created_by VARCHAR(255),
+  updated_by VARCHAR(255)
+);

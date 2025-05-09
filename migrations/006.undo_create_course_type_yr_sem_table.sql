@@ -1,0 +1,1 @@
+DROP TABLE course_type_yr_sem;

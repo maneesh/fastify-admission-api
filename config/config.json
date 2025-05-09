@@ -1,21 +1,21 @@
 {
   "development": {
     "username": "root",
-    "password": "Admin@123",
+    "password": "Aradhya@123",
     "database": "manage_admission",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
     "username": "root",
-    "password": "Admin@123",
+    "password": "Aradhya@123",
     "database": "manage_admission",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
     "username": "root",
-    "password": "Admin@123",
+    "password": "Aradhya@123",
     "database": "manage_admission",
     "host": "127.0.0.1",
     "dialect": "mysql"

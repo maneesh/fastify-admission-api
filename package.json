@@ -5,7 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "migrate": "node migrate.js",
+    "seed": "node seed.js"
   },
   "keywords": [],
   "author": "",
@@ -16,11 +18,10 @@
     "dotenv": "^16.5.0",
     "fastify": "^5.3.2",
     "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.14.1"
+    "mysql2": "^3.14.1",
+    "postgrator": "^8.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10",
-    "sequelize": "^6.37.7",
-    "sequelize-cli": "^6.6.3"
+    "nodemon": "^3.1.10"
   }
 }
