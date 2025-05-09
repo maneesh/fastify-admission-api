@@ -3,9 +3,9 @@ const mysql = require('mysql2/promise');
 const config = require('../../postgrator-config');
 
 class User {
-  constructor(id, full_name, email, password, mobile, role_id) {
+  constructor(id, fullname, email, password, mobile, role_id) {
     this.id = id;
-    this.full_name = full_name;
+    this.fullname = fullname;
     this.email = email;
     this.password = password;
     this.mobile = mobile;
@@ -22,7 +22,7 @@ class User {
     }
   }
 
-  static async create({ fullname, email, mobile }) {
+  static async create({ fullname, email, password, mobile, role_id }) {
     let connection;
     try {
       connection = await mysql.createConnection(config.connectionString);
@@ -30,28 +30,27 @@ class User {
       if (existing) {
         throw new Error('Email already exists');
       }
-
-      const defaultPassword = 'Ravi@555';
-      const hashedPassword = await bcrypt.hash(defaultPassword, 10);
-      const role_id = 1;
-
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
       const [result] = await connection.execute(
         'INSERT INTO user (fullname, email, password, mobile, role_id) VALUES (?, ?, ?, ?, ?)',
         [fullname, email, hashedPassword, mobile, role_id]
       );
+      const myId = result.insertId;
 
       return {
-        id: result[0].insertId,
+       id: myId,
         fullname,
         email,
         mobile,
         role_id
-        // Do NOT return the password here for security
       };
     } finally {
       if (connection) await connection.end();
     }
   }
+  
 
   static async findByEmail(email) {
     const connection = await mysql.createConnection(config.connectionString);

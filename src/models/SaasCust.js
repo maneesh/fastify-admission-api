@@ -35,7 +35,7 @@ class SaasCust {
     const connection = await mysql.createConnection(config.connectionString);
     try {
       const [result] = await connection.execute('INSERT INTO saas_cust (name) VALUES (?)', [name]);
-      const id = result[0].insertId;
+      const id = result.insertId;
       return new SaasCust(id, name);
     } finally {
       await connection.end();

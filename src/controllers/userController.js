@@ -1,9 +1,10 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const User = require("../models/User");
+const User = require("../models/User.js");
 const SaasCust = require("../models/SaasCust");
 const JWT_SECRET = process.env.JWT_SECRET || "yourSuperSecretKey12345";
 const connection = require('../db/connection'); 
+const SaasCustUser = require("../models/SaasCustUser.js");
 
 // GET all users
 exports.getAllUsers = async (req, res) => {
@@ -19,7 +20,7 @@ exports.getAllUsers = async (req, res) => {
 // CREATE a user
 exports.createUser = async (req, res) => {
   try {
-    const { full_name, email, mobile,name } = req.body;
+    const { fullname='', email, mobile,name } = req.body;
 
     const existingUser = await User.findByEmail(email);
     if (existingUser) {
@@ -27,17 +28,23 @@ exports.createUser = async (req, res) => {
     }
 
     const password = "Ravi@555";
-    const role_id = 1;
+    const role_id = 2;
 
     const newUser = await User.create({
-      full_name,
+      fullname,
       email,
       password,
       mobile,
       role_id,
     });
     const newSaasCust =  await SaasCust.create(name);
-    console.log('Created SaasCust:', newSaasCust);
+
+    const newSaasCustUser = await SaasCustUser.create({
+      user_id: newUser.id,
+      saas_cust_id: newSaasCust.id,
+    });
+    
+    console.log('Created SaasCustUser:', newSaasCustUser);    console.log('Created SaasCust:', newSaasCust);
     res.status(200).send({
       message: "User created successfully",
       user: newUser,
@@ -72,21 +79,39 @@ exports.loginUser = async (req, res) => {
        FROM feature f
        JOIN role_feature rf ON rf.feature_id = f.id
        WHERE rf.role_id = ?`,
-      {
-        replacements: [user.role_id],
-      }
+       [user.role_id]
     );
+    const [[scuRow]] = await connection.query(
+      `SELECT saas_cust_id FROM saas_cust_user WHERE user_id = ?`,
+      [user.id]
+    );
+
+    // Check if scuRow exists, if not, send an error
+    if (!scuRow || !scuRow.saas_cust_id) {
+      return res.status(400).send({ message: "No SaaS customer associated with this user" });
+    }
+
+    // Step 6: Fetch additional info like role_name
+    const [[extraInfo]] = await connection.query(
+      `SELECT 
+         (SELECT name FROM role WHERE id = ?) AS role_name,
+         (SELECT name FROM saas_cust WHERE id = ?) AS school_name`,
+      [user.role_id, scuRow.saas_cust_id]
+    );
+
     
     res.send({
       message: "Login successful",
       token,
       user: {
         id: user.id,
-        full_name: user.full_name,
+        fullname: user.fullname,
         email: user.email,
         mobile: user.mobile,
         role_id: user.role_id,
         name:user.name,
+        role_name: extraInfo.role_name,
+        school_name: extraInfo.school_name,
         features: features.map(f => f.name)      },
     });
   } catch (err) {
