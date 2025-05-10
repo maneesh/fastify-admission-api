@@ -2,7 +2,9 @@ const SaasStudentRegister = require('../models/SaasStudentRegister');
 
 exports.getAllSaasStudentRegisters = async (req, res) => {
   try {
-    const saasStudentRegisters = await SaasStudentRegister.getAll();
+   const cust_id = req?.user?.cust_id;
+   console.log('cust',req.user)
+    const saasStudentRegisters = await SaasStudentRegister.getAll(cust_id);
     res.send(saasStudentRegisters);
   } catch (err) {
     console.error(err);

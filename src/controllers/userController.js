@@ -71,9 +71,7 @@ exports.loginUser = async (req, res) => {
       return res.status(401).send({ message: "Invalid password" });
     }
 
-    const token = jwt.sign({ user_id: user.id }, JWT_SECRET, {
-      expiresIn: "1h",
-    });
+  
     const [features] = await connection.query(
       `SELECT DISTINCT f.name 
        FROM feature f
@@ -95,10 +93,13 @@ exports.loginUser = async (req, res) => {
     const [[extraInfo]] = await connection.query(
       `SELECT 
          (SELECT name FROM role WHERE id = ?) AS role_name,
-         (SELECT name FROM saas_cust WHERE id = ?) AS school_name`,
-      [user.role_id, scuRow.saas_cust_id]
+         (SELECT name FROM saas_cust WHERE id = ?) AS school_name,? As cust_id
+         `,
+      [user.role_id, scuRow.saas_cust_id,scuRow.saas_cust_id]
     );
-
+    const token = jwt.sign({ user_id: user?.id,cust_id:extraInfo.cust_id }, JWT_SECRET, {
+      expiresIn: "24h",
+    });
     
     res.send({
       message: "Login successful",
@@ -110,6 +111,7 @@ exports.loginUser = async (req, res) => {
         mobile: user.mobile,
         role_id: user.role_id,
         name:user.name,
+        cust_id:extraInfo.cust_id,
         role_name: extraInfo.role_name,
         school_name: extraInfo.school_name,
         features: features.map(f => f.name)      },

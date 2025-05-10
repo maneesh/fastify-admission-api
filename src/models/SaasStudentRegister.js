@@ -1,4 +1,5 @@
 const mysql = require('mysql2/promise');
+const { formatDateToDDMMYYYY } = require('../utils/index.js');
 const config = require('../../config/config.js')['development'];
 
 class SaasStudentRegister {
@@ -11,13 +12,13 @@ class SaasStudentRegister {
     this.full_name = full_name;
     this.email = email;
     this.mobile = mobile;
-    this.date_of_birth = date_of_birth;
+    this.date_of_birth = formatDateToDDMMYYYY(date_of_birth);
     this.father_name = father_name;
     this.mother_name = mother_name;
     this.registration_num = registration_num;
   }
 
-  static async getAll() {
+  static async getAll(cust_id) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
@@ -25,7 +26,10 @@ class SaasStudentRegister {
       database: config.database
     });
     try {
-      const [rows] = await connection.execute('SELECT * FROM saas_student_register');
+      const [rows] = await connection.execute(
+        'SELECT * FROM saas_student_register WHERE cust_id = ?',
+        [cust_id]
+      );      
       return rows.map(row => new SaasStudentRegister(row.id, row.cust_id, row.course_id, row.year_sem_id, row.register_session, row.full_name, row.email, row.mobile, row.date_of_birth, row.father_name, row.mother_name, row.registration_num));
     } finally {
       await connection.end();

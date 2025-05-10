@@ -17,13 +17,27 @@ class Courses {
       password: config.password,
       database: config.database
     });
+  
     try {
-      const [rows] = await connection.execute('SELECT * FROM courses');
-      return rows.map(row => new Courses(row.id, row.course_type, row.course_name, row.years, row.semesters));
+      const [rows] = await connection.execute(`
+        SELECT 
+          c.id,
+          ct.name AS course_type, -- replacing ID with name
+          c.course_name,
+          c.years,
+          c.semesters
+        FROM courses c
+        JOIN course_types ct ON c.course_type = ct.id
+      `);
+  
+      return rows.map(row => 
+        new Courses(row.id, row.course_type, row.course_name, row.years, row.semesters)
+      );
     } finally {
       await connection.end();
     }
   }
+  
 
   static async getById(id) {
     const connection = await mysql.createConnection({
