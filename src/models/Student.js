@@ -1,5 +1,5 @@
 const mysql = require('mysql2/promise');
-const config = require('../../postgrator-config');
+const config = require('../../config/config.js')['development'];
 
 class Student {
   constructor(id, cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num) {
@@ -18,7 +18,12 @@ class Student {
   }
 
   static async getAll() {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [rows] = await connection.execute('SELECT * FROM saas_student_register');
       return rows.map(row => new Student(
@@ -41,7 +46,12 @@ class Student {
   }
 
   static async getById(id) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [rows] = await connection.execute('SELECT * FROM saas_student_register WHERE id = ?', [id]);
       if (rows.length === 0) {

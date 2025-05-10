@@ -1,5 +1,5 @@
 const mysql = require('mysql2/promise');
-const config = require('../../postgrator-config');
+const config = require('../../config/config.js')['development'];
 
 class CourseTypes {
   constructor(id, name, short_name) {
@@ -9,7 +9,12 @@ class CourseTypes {
   }
 
   static async getAll() {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [rows] = await connection.execute('SELECT * FROM course_types');
       return rows.map(row => new CourseTypes(row.id, row.name, row.short_name));
@@ -19,7 +24,12 @@ class CourseTypes {
   }
 
   static async getById(id) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [rows] = await connection.execute('SELECT * FROM course_types WHERE id = ?', [id]);
       if (rows.length === 0) {
@@ -33,7 +43,12 @@ class CourseTypes {
   }
 
   static async create(name, short_name) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [result] = await connection.execute('INSERT INTO course_types (name, short_name) VALUES (?, ?)', [name, short_name]);
       const id = result[0].insertId;
@@ -44,7 +59,12 @@ class CourseTypes {
   }
 
   static async update(id, name, short_name) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       await connection.execute('UPDATE course_types SET name = ?, short_name = ? WHERE id = ?', [name, short_name, id]);
       return new CourseTypes(id, name, short_name);
@@ -54,7 +74,12 @@ class CourseTypes {
   }
 
   static async delete(id) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       await connection.execute('DELETE FROM course_types WHERE id = ?', [id]);
     } finally {

@@ -1,5 +1,5 @@
 const mysql = require('mysql2/promise');
-const config = require('../../postgrator-config');
+const config = require('../../config/config.js')['development'];
 
 class SaasCustCourse {
   constructor(id, saas_cust_id, course_id, course_display, year_sem_type, reg_enabled) {
@@ -12,7 +12,12 @@ class SaasCustCourse {
   }
 
   static async getAll() {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [rows] = await connection.execute('SELECT * FROM saas_cust_course');
       return rows.map(row => new SaasCustCourse(row.id, row.saas_cust_id, row.course_id, row.course_display, row.year_sem_type, row.reg_enabled));
@@ -22,7 +27,12 @@ class SaasCustCourse {
   }
 
   static async getById(id) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [rows] = await connection.execute('SELECT * FROM saas_cust_course WHERE id = ?', [id]);
       if (rows.length === 0) {
@@ -36,7 +46,12 @@ class SaasCustCourse {
   }
 
   static async create(saas_cust_id, course_id, course_display, year_sem_type, reg_enabled) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [result] = await connection.execute('INSERT INTO saas_cust_course (saas_cust_id, course_id, course_display, year_sem_type, reg_enabled) VALUES (?, ?, ?, ?, ?)', [saas_cust_id, course_id, course_display, year_sem_type, reg_enabled]);
       const id = result[0].insertId;
@@ -47,7 +62,12 @@ class SaasCustCourse {
   }
 
   static async update(id, saas_cust_id, course_id, course_display, year_sem_type, reg_enabled) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       await connection.execute('UPDATE saas_cust_course SET saas_cust_id = ?, course_id = ?, course_display = ?, year_sem_type = ?, reg_enabled = ? WHERE id = ?', [saas_cust_id, course_id, course_display, year_sem_type, reg_enabled, id]);
       return new SaasCustCourse(id, saas_cust_id, course_id, course_display, year_sem_type, reg_enabled);
@@ -57,7 +77,12 @@ class SaasCustCourse {
   }
 
   static async delete(id) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       await connection.execute('DELETE FROM saas_cust_course WHERE id = ?', [id]);
     } finally {

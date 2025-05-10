@@ -1,5 +1,5 @@
 const mysql = require('mysql2/promise');
-const config = require('../../postgrator-config');
+const config = require('../../config/config.js')['development'];
 
 class CustDetails {
   constructor(id, cust_id, domain, api_key, active_session) {
@@ -11,7 +11,12 @@ class CustDetails {
   }
 
   static async getAll() {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [rows] = await connection.execute('SELECT * FROM cust_details');
       return rows.map(row => new CustDetails(row.id, row.cust_id, row.domain, row.api_key, row.active_session));
@@ -21,7 +26,12 @@ class CustDetails {
   }
 
   static async getById(id) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [rows] = await connection.execute('SELECT * FROM cust_details WHERE id = ?', [id]);
       if (rows.length === 0) {
@@ -35,7 +45,12 @@ class CustDetails {
   }
 
   static async create(cust_id, domain, api_key, active_session) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [result] = await connection.execute('INSERT INTO cust_details (cust_id, domain, api_key, active_session) VALUES (?, ?, ?, ?)', [cust_id, domain, api_key, active_session]);
       const id = result[0].insertId;
@@ -46,7 +61,12 @@ class CustDetails {
   }
 
   static async update(id, cust_id, domain, api_key, active_session) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       await connection.execute('UPDATE cust_details SET cust_id = ?, domain = ?, api_key = ?, active_session = ? WHERE id = ?', [cust_id, domain, api_key, active_session, id]);
       return new CustDetails(id, cust_id, domain, api_key, active_session);
@@ -56,7 +76,12 @@ class CustDetails {
   }
 
   static async delete(id) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       await connection.execute('DELETE FROM cust_details WHERE id = ?', [id]);
     } finally {

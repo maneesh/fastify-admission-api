@@ -2,7 +2,7 @@
 
 1.  **Clone the repository:**
 
-2. **Configure .env and config file accordingly**
+2. **Configure .env and config.js file accordingly**
 
 3.  **Install dependencies:**
 
@@ -11,18 +11,10 @@
   
 
 4.  **Configure the database:**
-
-    *   Create a `manage_admission` database in MySQL.
-    *   Update the database configuration in `postgrator-config.js` with your MySQL credentials.
-
-       
-        module.exports = {
-          "migrationDirectory": "migrations",
-          "driver": "mysql",
-          "connectionString": "mysql://root:Admin@123@localhost:3306/manage_admission"
-        }
+  
+  Create a `manage_admission` database in MySQL.
+    
       
-
 5.  **Run migrations and seeders:**
 
     

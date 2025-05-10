@@ -1,5 +1,5 @@
 const mysql = require('mysql2/promise');
-const config = require('../../postgrator-config');
+const config = require('../../config/config.js')['development'];
 
 class SaasStudentPaymentTransaction {
   constructor(id, register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id) {
@@ -13,7 +13,12 @@ class SaasStudentPaymentTransaction {
   }
 
   static async getAll() {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [rows] = await connection.execute('SELECT * FROM saas_student_payment_transaction');
       return rows.map(row => new SaasStudentPaymentTransaction(row.id, row.register_student_id, row.start_date_time, row.gateway_transaction_id, row.status, row.amount, row.fee_id));
@@ -23,7 +28,12 @@ class SaasStudentPaymentTransaction {
   }
 
   static async getById(id) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [rows] = await connection.execute('SELECT * FROM saas_student_payment_transaction WHERE id = ?', [id]);
       if (rows.length === 0) {
@@ -37,7 +47,12 @@ class SaasStudentPaymentTransaction {
   }
 
   static async create(register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [result] = await connection.execute('INSERT INTO saas_student_payment_transaction (register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id) VALUES (?, ?, ?, ?, ?, ?)', [register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id]);
       const id = result[0].insertId;
@@ -48,7 +63,12 @@ class SaasStudentPaymentTransaction {
   }
 
   static async update(id, register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       await connection.execute('UPDATE saas_student_payment_transaction SET register_student_id = ?, start_date_time = ?, gateway_transaction_id = ?, status = ?, amount = ?, fee_id = ? WHERE id = ?', [register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id, id]);
       return new SaasStudentPaymentTransaction(id, register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id);
@@ -58,7 +78,12 @@ class SaasStudentPaymentTransaction {
   }
 
   static async delete(id) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       await connection.execute('DELETE FROM saas_student_payment_transaction WHERE id = ?', [id]);
     } finally {

@@ -1,5 +1,5 @@
 const mysql = require('mysql2/promise');
-const config = require('../../postgrator-config');
+const config = require('../../config/config.js')['development'];
 
 class SaasStudentRegister {
   constructor(id, cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num) {
@@ -18,7 +18,12 @@ class SaasStudentRegister {
   }
 
   static async getAll() {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [rows] = await connection.execute('SELECT * FROM saas_student_register');
       return rows.map(row => new SaasStudentRegister(row.id, row.cust_id, row.course_id, row.year_sem_id, row.register_session, row.full_name, row.email, row.mobile, row.date_of_birth, row.father_name, row.mother_name, row.registration_num));
@@ -28,7 +33,12 @@ class SaasStudentRegister {
   }
 
   static async getById(id) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [rows] = await connection.execute('SELECT * FROM saas_student_register WHERE id = ?', [id]);
       if (rows.length === 0) {
@@ -42,7 +52,12 @@ class SaasStudentRegister {
   }
 
     static async create(cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [result] = await connection.execute('INSERT INTO saas_student_register (cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num]);
       const id = result[0].insertId;
@@ -53,7 +68,12 @@ class SaasStudentRegister {
   }
 
   static async update(id, cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       await connection.execute('UPDATE saas_student_register SET cust_id = ?, course_id = ?, year_sem_id = ?, register_session = ?, full_name = ?, email = ?, mobile = ?, date_of_birth = ?, father_name = ?, mother_name = ?, registration_num = ? WHERE id = ?', [cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num, id]);
     return new SaasStudentRegister(id, cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num);
@@ -63,7 +83,12 @@ class SaasStudentRegister {
   }
 
   static async delete(id) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       await connection.execute('DELETE FROM saas_student_register WHERE id = ?', [id]);
     } finally {

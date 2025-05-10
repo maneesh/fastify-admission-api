@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const mysql = require('mysql2/promise');
-const config = require('../../postgrator-config');
+const config = require('../../config/config.js')['development'];
 
 class User {
   constructor(id, fullname, email, password, mobile, role_id) {
@@ -13,7 +13,12 @@ class User {
   }
 
   static async getAll() {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [rows] = await connection.execute('SELECT * FROM user');
       return rows.map(row => new User(row.id, row.fullname, row.email, row.password, row.mobile, row.role_id));
@@ -25,7 +30,12 @@ class User {
   static async create({ fullname, email, password, mobile, role_id }) {
     let connection;
     try {
-      connection = await mysql.createConnection(config.connectionString);
+      connection = await mysql.createConnection({
+        host: config.host,
+        user: config.username,
+        password: config.password,
+        database: config.database
+      });
       const existing = await this.findByEmail(email);
       if (existing) {
         throw new Error('Email already exists');
@@ -53,7 +63,12 @@ class User {
   
 
   static async findByEmail(email) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [rows] = await connection.execute('SELECT * FROM user WHERE email = ?', [email]);
       if (rows.length === 0) return null;

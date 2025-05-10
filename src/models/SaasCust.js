@@ -1,5 +1,5 @@
 const mysql = require('mysql2/promise');
-const config = require('../../postgrator-config');
+const config = require('../../config/config.js')['development'];
 
 class SaasCust {
   constructor(id, name) {
@@ -8,7 +8,12 @@ class SaasCust {
   }
 
   static async getAll() {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [rows] = await connection.execute('SELECT * FROM saas_cust');
       return rows.map(row => new SaasCust(row.id, row.name));
@@ -18,7 +23,12 @@ class SaasCust {
   }
 
   static async getById(id) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [rows] = await connection.execute('SELECT * FROM saas_cust WHERE id = ?', [id]);
       if (rows.length === 0) {
@@ -32,7 +42,12 @@ class SaasCust {
   }
 
   static async create(name) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       const [result] = await connection.execute('INSERT INTO saas_cust (name) VALUES (?)', [name]);
       const id = result.insertId;
@@ -43,7 +58,12 @@ class SaasCust {
   }
 
   static async update(id, name) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       await connection.execute('UPDATE saas_cust SET name = ? WHERE id = ?', [name, id]);
       return new SaasCust(id, name);
@@ -53,7 +73,12 @@ class SaasCust {
   }
 
   static async delete(id) {
-    const connection = await mysql.createConnection(config.connectionString);
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
     try {
       await connection.execute('DELETE FROM saas_cust WHERE id = ?', [id]);
     } finally {

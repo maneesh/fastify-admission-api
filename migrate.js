@@ -34,12 +34,17 @@
 const mysql = require('mysql2/promise');
 const fs = require('fs/promises');
 const path = require('path');
-const config = require('./postgrator-config');
+const config = require('./config/config.js')['development'];
 
 async function migrate() {
   let connection;
   try {
-    connection = await mysql.createConnection(config.connectionString);
+    connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
 
     const migrationFiles = (await fs.readdir(path.resolve(__dirname, 'migrations')))
       .filter(file => file.endsWith('.sql') && !file.includes('.undo'))
