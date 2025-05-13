@@ -25,21 +25,22 @@ exports.getCourseTypesById = async (req, res) => {
 
 exports.createCourseTypes = async (req, res) => {
   try {
-    const courseTypes = await CourseTypes.create(req.body.name, req.body.short_name);
+    const {name, short_name} = req.body;
+    const courseTypes = await CourseTypes.create(name, short_name, req);
     res.status(201).send(courseTypes);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Error creating course types' });
+    res.status(500).send({message: 'Error creating course types'});
   }
 };
 
 exports.updateCourseTypes = async (req, res) => {
   try {
-    const courseTypes = await CourseTypes.update(req.params.id, req.body.name, req.body.short_name);
+    const courseTypes = await CourseTypes.update(req.params.id, req.body.name, req.body.short_name, req);
     res.send(courseTypes);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Error updating course types' });
+    res.status(500).send({message: 'Error updating course types'});
   }
 };
 

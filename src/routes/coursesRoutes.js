@@ -4,8 +4,8 @@ const auth = require('../middleware/auth');
 async function coursesRoutes (fastify, options) {
   fastify.get('/courses',{ preHandler: auth }, coursesController.getAllCourses);
   fastify.get('/courses/:id', coursesController.getCoursesById);
-  fastify.post('/courses', coursesController.createCourses);
-  fastify.put('/courses/:id', coursesController.updateCourses);
+  fastify.post('/courses', (req, res) => coursesController.createCourses(req, res));
+  fastify.put('/courses/:id', (req, res) => coursesController.updateCourses(req, res));
   fastify.delete('/courses/:id', coursesController.deleteCourses);
 }
 

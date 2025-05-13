@@ -36,14 +36,14 @@ exports.createUser = async (req, res) => {
       password,
       mobile,
       role_id,
-    });
-    const newSaasCust =  await SaasCust.create(name);
+    }, req);
+    const newSaasCust =  await SaasCust.create(name, req);
 
-    const newSaasCustUser = await SaasCustUser.create({
-      user_id: newUser.id,
-      saas_cust_id: newSaasCust.id,
-    });
     
+        const newSaasCustUser = await SaasCustUser.create({
+          user_id: newUser.id,
+          saas_cust_id: newSaasCust.id,
+        }, req);
     console.log('Created SaasCustUser:', newSaasCustUser);    console.log('Created SaasCust:', newSaasCust);
     res.status(200).send({
       message: "User created successfully",

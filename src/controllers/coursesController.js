@@ -25,21 +25,22 @@ exports.getCoursesById = async (req, res) => {
 
 exports.createCourses = async (req, res) => {
   try {
-    const courses = await Courses.create(req.body.course_type, req.body.course_name, req.body.years, req.body.semesters);
+    const {course_type, course_name, years, semesters} = req.body
+    const courses = await Courses.create(course_type, course_name, years, semesters, req);
     res.status(201).send(courses);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Error creating courses' });
+    res.status(500).send({message: 'Error creating courses'});
   }
 };
 
 exports.updateCourses = async (req, res) => {
   try {
-    const courses = await Courses.update(req.params.id, req.body.course_type, req.body.course_name, req.body.years, req.body.semesters);
+    const courses = await Courses.update(req.params.id, req.body.course_type, req.body.course_name, req.body.years, req.body.semesters, req);
     res.send(courses);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Error updating courses' });
+    res.status(500).send({message: 'Error updating courses'});
   }
 };
 

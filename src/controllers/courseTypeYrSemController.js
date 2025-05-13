@@ -25,21 +25,23 @@ exports.getCourseTypeYrSemById = async (req, res) => {
 
 exports.createCourseTypeYrSem = async (req, res) => {
   try {
-    const courseTypeYrSem = await CourseTypeYrSem.create(req.body.yr_sem_type, req.body.yr_sem, req.body.display_name);
+    const {yr_sem_type, yr_sem, display_name} = req.body
+    const courseTypeYrSem = await CourseTypeYrSem.create(yr_sem_type, yr_sem, display_name, req);
     res.status(201).send(courseTypeYrSem);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Error creating course type yr sem' });
+    res.status(500).send({message: 'Error creating course type yr sem'});
   }
 };
 
 exports.updateCourseTypeYrSem = async (req, res) => {
   try {
-    const courseTypeYrSem = await CourseTypeYrSem.update(req.params.id, req.body.yr_sem_type, req.body.yr_sem, req.body.display_name);
+    const {yr_sem_type, yr_sem, display_name} = req.body
+    const courseTypeYrSem = await CourseTypeYrSem.update(req.params.id, yr_sem_type, yr_sem, display_name, req);
     res.send(courseTypeYrSem);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Error updating course type yr sem' });
+    res.status(500).send({message: 'Error updating course type yr sem'});
   }
 };
 

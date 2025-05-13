@@ -25,21 +25,23 @@ exports.getSaasCustById = async (req, res) => {
 
 exports.createSaasCust = async (req, res) => {
   try {
-    const saasCust = await SaasCust.create(req.body.name);
+    const {name} = req.body
+    const saasCust = await SaasCust.create(name, req);
     res.status(201).send(saasCust);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Error creating saas cust' });
+    res.status(500).send({message: 'Error creating saas cust'});
   }
 };
 
 exports.updateSaasCust = async (req, res) => {
   try {
-    const saasCust = await SaasCust.update(req.params.id, req.body.name);
+    const {name} = req.body
+    const saasCust = await SaasCust.update(req.params.id, name, req);
     res.send(saasCust);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Error updating saas cust' });
+    res.status(500).send({message: 'Error updating saas cust'});
   }
 };
 

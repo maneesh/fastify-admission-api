@@ -26,7 +26,8 @@ exports.getSaasStudentRegisterById = async (req, res) => {
 
 exports.createSaasStudentRegister = async (req, res) => {
   try {
-    const saasStudentRegister = await SaasStudentRegister.create(req.body.cust_id, req.body.course_id, req.body.year_sem_id, req.body.register_session, req.body.full_name, req.body.email, req.body.mobile, req.body.date_of_birth, req.body.father_name, req.body.mother_name, req.body.registration_num);
+    const { cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num } = req.body;
+    const saasStudentRegister = await SaasStudentRegister.create(cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num, req);
     res.status(201).send(saasStudentRegister);
   } catch (err) {
     console.error(err);
@@ -36,7 +37,8 @@ exports.createSaasStudentRegister = async (req, res) => {
 
 exports.updateSaasStudentRegister = async (req, res) => {
   try {
-    const saasStudentRegister = await SaasStudentRegister.update(req.params.id, req.body.cust_id, req.body.course_id, req.body.year_sem_id, req.body.register_session, req.body.full_name, req.body.email, req.body.mobile, req.body.date_of_birth, req.body.father_name, req.body.mother_name, req.body.registration_num);
+    const { cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num } = req.body;
+    const saasStudentRegister = await SaasStudentRegister.update(req.params.id, cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num, req);
     res.send(saasStudentRegister);
   } catch (err) {
     console.error(err);

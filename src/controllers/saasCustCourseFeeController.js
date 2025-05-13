@@ -25,21 +25,23 @@ exports.getSaasCustCourseFeeById = async (req, res) => {
 
 exports.createSaasCustCourseFee = async (req, res) => {
   try {
-    const saasCustCourseFee = await SaasCustCourseFee.create(req.body.saas_cust_id, req.body.fee_type, req.body.amount, req.body.categery, req.body.updated_by);
+    const {saas_cust_id, fee_type, amount, categery} = req.body
+    const saasCustCourseFee = await SaasCustCourseFee.create(saas_cust_id, fee_type, amount, categery, req);
     res.status(201).send(saasCustCourseFee);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Error creating saas cust course fee' });
+    res.status(500).send({message: 'Error creating saas cust course fee'});
   }
 };
 
 exports.updateSaasCustCourseFee = async (req, res) => {
   try {
-    const saasCustCourseFee = await SaasCustCourseFee.update(req.params.id, req.body.saas_cust_id, req.body.fee_type, req.body.amount, req.body.categery, req.body.updated_by);
+    const {saas_cust_id, fee_type, amount, categery} = req.body
+    const saasCustCourseFee = await SaasCustCourseFee.update(req.params.id, saas_cust_id, fee_type, amount, categery, req);
     res.send(saasCustCourseFee);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Error updating saas cust course fee' });
+    res.status(500).send({message: 'Error updating saas cust course fee'});
   }
 };
 

@@ -35,11 +35,12 @@ exports.createSaasStudentPaymentTransaction = async (req, res) => {
 
 exports.updateSaasStudentPaymentTransaction = async (req, res) => {
   try {
-    const saasStudentPaymentTransaction = await SaasStudentPaymentTransaction.update(req.params.id, req.body.register_student_id, req.body.start_date_time, req.body.gateway_transaction_id, req.body.status, req.body.amount, req.body.fee_id);
+    const {register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id} = req.body
+    const saasStudentPaymentTransaction = await SaasStudentPaymentTransaction.update(req.params.id, register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id, req);
     res.send(saasStudentPaymentTransaction);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Error updating saas student payment transaction' });
+    res.status(500).send({message: 'Error updating saas student payment transaction'});
   }
 };
 

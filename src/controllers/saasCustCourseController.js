@@ -34,13 +34,14 @@ exports.createSaasCustCourse = async (req, res) => {
       course_id,
       course_display,
       year_sem_type,
-      reg_enabled
+      reg_enabled,
+      req
     );
 
     res.status(200).send(saasCustCourse);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Error creating saas cust course' });
+    res.status(500).send({message: 'Error creating saas cust course'});
   }
 };
 
@@ -56,12 +57,13 @@ exports.updateSaasCustCourse = async (req, res) => {
       course_id,
       course_display,
       year_sem_type,
+      req
     );
 
     res.send(saasCustCourse);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Error updating saas cust course' });
+    res.status(500).send({message: 'Error updating saas cust course'});
   }
 };
 

@@ -25,21 +25,23 @@ exports.getCustDetailsById = async (req, res) => {
 
 exports.createCustDetails = async (req, res) => {
   try {
-    const custDetails = await CustDetails.create(req.body.cust_id, req.body.domain, req.body.api_key, req.body.active_session);
+    const {cust_id, domain, api_key, active_session} = req.body
+    const custDetails = await CustDetails.create(cust_id, domain, api_key, active_session, req);
     res.status(201).send(custDetails);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Error creating cust details' });
+    res.status(500).send({message: 'Error creating cust details'});
   }
 };
 
 exports.updateCustDetails = async (req, res) => {
   try {
-    const custDetails = await CustDetails.update(req.params.id, req.body.cust_id, req.body.domain, req.body.api_key, req.body.active_session);
+    const {cust_id, domain, api_key, active_session} = req.body
+    const custDetails = await CustDetails.update(req.params.id, cust_id, domain, api_key, active_session, req);
     res.send(custDetails);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Error updating cust details' });
+    res.status(500).send({message: 'Error updating cust details'});
   }
 };
 
