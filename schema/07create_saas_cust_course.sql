@@ -7,7 +7,7 @@ CREATE TABLE saas_cust_course (
     course_id INT NOT NULL,
     course_display VARCHAR(255),       -- E.g., "B.Sc Maths"
     year_sem_type ENUM('Year', 'Semester'),
-    reg_enabled BOOLEAN DEFAULT FALSE,
+    reg_enabled BOOLEAN DEFAULT TRUE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by VARCHAR(255),

@@ -1,10 +1,7 @@
 require('dotenv').config(); // Load environment variables
-
-const jwt = require('jsonwebtoken');
 const fastify = require('fastify')({ logger: true });
 const cors = require('@fastify/cors');
 
-const connection = require('./db/connection');
 
 // Routes
 const studentRoutes = require('./routes/studentRoutes');
@@ -25,7 +22,7 @@ const start = async () => {
   try {
     // Register CORS
     await fastify.register(cors, {
-      origin: true // or set to specific origin like 'http://localhost:5173'
+      origin: true 
     });
 
     // Register all routes under /saas prefix
@@ -48,10 +45,6 @@ const start = async () => {
         return { hello: 'world' };
       });
     }, { prefix: '/saas' });
-
-    // Token generation for testing/debugging
-    const token = jwt.sign({ user_id: 1 }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    console.log('Generated Token:', token);
 
     // Start server
     await fastify.listen({ port: 3000 });

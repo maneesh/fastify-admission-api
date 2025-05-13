@@ -25,8 +25,19 @@ exports.getSaasCustCourseById = async (req, res) => {
 
 exports.createSaasCustCourse = async (req, res) => {
   try {
-    const saasCustCourse = await SaasCustCourse.create(req.body.saas_cust_id, req.body.course_id, req.body.course_display, req.body.year_sem_type, req.body.reg_enabled);
-    res.status(201).send(saasCustCourse);
+    const saas_cust_id = req?.user?.cust_id;  // From auth
+    const reg_enabled = true; 
+    const { course_id, course_display, year_sem_type } = req.body;
+
+    const saasCustCourse = await SaasCustCourse.create(
+      saas_cust_id,
+      course_id,
+      course_display,
+      year_sem_type,
+      reg_enabled
+    );
+
+    res.status(200).send(saasCustCourse);
   } catch (err) {
     console.error(err);
     res.status(500).send({ message: 'Error creating saas cust course' });
@@ -35,13 +46,25 @@ exports.createSaasCustCourse = async (req, res) => {
 
 exports.updateSaasCustCourse = async (req, res) => {
   try {
-    const saasCustCourse = await SaasCustCourse.update(req.params.id, req.body.saas_cust_id, req.body.course_id, req.body.course_display, req.body.year_sem_type, req.body.reg_enabled);
+    const {id} = req.params;
+    const saas_cust_id = req?.user?.cust_id;
+    const { course_id, course_display, year_sem_type} = req.body;
+
+    const saasCustCourse = await SaasCustCourse.update(
+      id,
+      saas_cust_id,
+      course_id,
+      course_display,
+      year_sem_type,
+    );
+
     res.send(saasCustCourse);
   } catch (err) {
     console.error(err);
     res.status(500).send({ message: 'Error updating saas cust course' });
   }
 };
+
 
 exports.deleteSaasCustCourse = async (req, res) => {
   try {

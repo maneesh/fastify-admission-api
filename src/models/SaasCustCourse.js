@@ -44,7 +44,6 @@ class SaasCustCourse {
       await connection.end();
     }
   }
-
   static async create(saas_cust_id, course_id, course_display, year_sem_type, reg_enabled) {
     const connection = await mysql.createConnection({
       host: config.host,
@@ -52,29 +51,52 @@ class SaasCustCourse {
       password: config.password,
       database: config.database
     });
+
     try {
-      const [result] = await connection.execute('INSERT INTO saas_cust_course (saas_cust_id, course_id, course_display, year_sem_type, reg_enabled) VALUES (?, ?, ?, ?, ?)', [saas_cust_id, course_id, course_display, year_sem_type, reg_enabled]);
-      const id = result[0].insertId;
+      const [result] = await connection.execute(`
+        INSERT INTO saas_cust_course (saas_cust_id, course_id, course_display, year_sem_type, reg_enabled) 
+        VALUES (?, ?, ?, ?, ?)`,
+        [saas_cust_id, course_id, course_display, year_sem_type, reg_enabled]
+      );
+
+      const id = result?.insertId;
+
       return new SaasCustCourse(id, saas_cust_id, course_id, course_display, year_sem_type, reg_enabled);
     } finally {
       await connection.end();
     }
   }
 
-  static async update(id, saas_cust_id, course_id, course_display, year_sem_type, reg_enabled) {
+
+
+  static async update(id, saas_cust_id, course_id, course_display, year_sem_type) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
       password: config.password,
       database: config.database
     });
+  
     try {
-      await connection.execute('UPDATE saas_cust_course SET saas_cust_id = ?, course_id = ?, course_display = ?, year_sem_type = ?, reg_enabled = ? WHERE id = ?', [saas_cust_id, course_id, course_display, year_sem_type, reg_enabled, id]);
-      return new SaasCustCourse(id, saas_cust_id, course_id, course_display, year_sem_type, reg_enabled);
+      await connection.execute(
+        `UPDATE saas_cust_course 
+         SET saas_cust_id = ?, course_id = ?, course_display = ?, year_sem_type = ?
+         WHERE id = ?`,
+        [saas_cust_id, course_id, course_display, year_sem_type,id]
+      );
+  
+      return {
+        id,
+        saas_cust_id,
+        course_id,
+        course_display,
+        year_sem_type,
+      };
     } finally {
       await connection.end();
     }
   }
+  
 
   static async delete(id) {
     const connection = await mysql.createConnection({

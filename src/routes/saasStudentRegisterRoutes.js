@@ -1,4 +1,6 @@
 const saasStudentRegisterController = require('../controllers/saasStudentRegisterController');
+const studentDetailsController = require('../controllers/studentDetailsController');
+
 const auth = require('../middleware/auth');
 
 async function saasStudentRegisterRoutes (fastify, options) {
@@ -7,6 +9,7 @@ async function saasStudentRegisterRoutes (fastify, options) {
   fastify.post('/saas_student_registers', saasStudentRegisterController.createSaasStudentRegister);
   fastify.put('/saas_student_registers/:id', saasStudentRegisterController.updateSaasStudentRegister);
   fastify.delete('/saas_student_register/:id', saasStudentRegisterController.deleteSaasStudentRegister);
+  fastify.get('/student-details/:id',{ preHandler: auth }, studentDetailsController.getAllStudentDetails);
 }
 
 module.exports = saasStudentRegisterRoutes;
