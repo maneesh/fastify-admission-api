@@ -47,23 +47,24 @@ class SaasCustCourseFee {
     }
   }
 
-  static async create(saas_cust_id, fee_type, amount, categery, updated_by) {
+  static async create(saas_cust_id, fee_type, amount, categery, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
       password: config.password,
-      database: config.database
+      database: config.database,
+      multipleStatements: true
     });
     try {
-      const [result] = await connection.execute('INSERT INTO saas_cust_course_fee (saas_cust_id, fee_type, amount, categery, updated_by) VALUES (?, ?, ?, ?, ?)', [saas_cust_id, fee_type, amount, categery, updated_by]);
+      const [result] = await connection.execute('INSERT INTO saas_cust_course_fee (saas_cust_id, fee_type, amount, categery, created_by, updated_by) VALUES (?, ?, ?, ?, ?, ?); SELECT LAST_INSERT_ID();', [saas_cust_id, fee_type, amount, categery, request.user.id, request.user.id]);
       const id = result[0].insertId;
-      return new SaasCustCourseFee(id, saas_cust_id, fee_type, amount, categery, updated_by);
+      return new SaasCustCourseFee(id, saas_cust_id, fee_type, amount, categery, request.user.id, null, null);
     } finally {
       await connection.end();
     }
   }
 
-  static async update(id, saas_cust_id, fee_type, amount, categery, updated_by) {
+  static async update(id, saas_cust_id, fee_type, amount, categery, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
@@ -71,8 +72,8 @@ class SaasCustCourseFee {
       database: config.database
     });
     try {
-      await connection.execute('UPDATE saas_cust_course_fee SET saas_cust_id = ?, fee_type = ?, amount = ?, categery = ?, updated_by = ? WHERE id = ?', [saas_cust_id, fee_type, amount, categery, updated_by, id]);
-      return new SaasCustCourseFee(id, saas_cust_id, fee_type, amount, categery, updated_by);
+      await connection.execute('UPDATE saas_cust_course_fee SET saas_cust_id = ?, fee_type = ?, amount = ?, categery = ?, updated_by = ? WHERE id = ?', [saas_cust_id, fee_type, amount, categery, request.user.id, id]);
+      return new SaasCustCourseFee(id, saas_cust_id, fee_type, amount, categery, request.user.id, null, null);
     } finally {
       await connection.end();
     }

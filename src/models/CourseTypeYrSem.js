@@ -43,15 +43,16 @@ class CourseTypeYrSem {
     }
   }
 
-  static async create(yr_sem_type, yr_sem, display_name) {
+  static async create(yr_sem_type, yr_sem, display_name, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
       password: config.password,
-      database: config.database
+      database: config.database,
+      multipleStatements: true
     });
     try {
-      const [result] = await connection.execute('INSERT INTO course_type_yr_sem (yr_sem_type, yr_sem, display_name) VALUES (?, ?, ?)', [yr_sem_type, yr_sem, display_name]);
+      const [result] = await connection.execute('INSERT INTO course_type_yr_sem (yr_sem_type, yr_sem, display_name, created_by) VALUES (?, ?, ?, ?); SELECT LAST_INSERT_ID();', [yr_sem_type, yr_sem, display_name, request.user.id]);
       const id = result[0].insertId;
       return new CourseTypeYrSem(id, yr_sem_type, yr_sem, display_name);
     } finally {
@@ -59,7 +60,7 @@ class CourseTypeYrSem {
     }
   }
 
-  static async update(id, yr_sem_type, yr_sem, display_name) {
+  static async update(id, yr_sem_type, yr_sem, display_name, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
@@ -67,7 +68,7 @@ class CourseTypeYrSem {
       database: config.database
     });
     try {
-      await connection.execute('UPDATE course_type_yr_sem SET yr_sem_type = ?, yr_sem = ?, display_name = ? WHERE id = ?', [yr_sem_type, yr_sem, display_name, id]);
+      await connection.execute('UPDATE course_type_yr_sem SET yr_sem_type = ?, yr_sem = ?, display_name = ?, updated_by = ? WHERE id = ?', [yr_sem_type, yr_sem, display_name, request.user.id, id]);
       return new CourseTypeYrSem(id, yr_sem_type, yr_sem, display_name);
     } finally {
       await connection.end();

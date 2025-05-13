@@ -58,15 +58,16 @@ class Courses {
     }
   }
 
-  static async create(course_type, course_name, years, semesters) {
+  static async create(course_type, course_name, years, semesters, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
       password: config.password,
-      database: config.database
+      database: config.database,
+      multipleStatements: true
     });
     try {
-      const [result] = await connection.execute('INSERT INTO courses (course_type, course_name, years, semesters) VALUES (?, ?, ?, ?)', [course_type, course_name, years, semesters]);
+      const [result] = await connection.execute('INSERT INTO courses (course_type, course_name, years, semesters, created_by) VALUES (?, ?, ?, ?, ?); SELECT LAST_INSERT_ID();', [course_type, course_name, years, semesters, request.user.id]);
       const id = result[0].insertId;
       return new Courses(id, course_type, course_name, years, semesters);
     } finally {
@@ -74,7 +75,7 @@ class Courses {
     }
   }
 
-  static async update(id, course_type, course_name, years, semesters) {
+  static async update(id, course_type, course_name, years, semesters, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
@@ -82,7 +83,7 @@ class Courses {
       database: config.database
     });
     try {
-      await connection.execute('UPDATE courses SET course_type = ?, course_name = ?, years = ?, semesters = ? WHERE id = ?', [course_type, course_name, years, semesters, id]);
+      await connection.execute('UPDATE courses SET course_type = ?, course_name = ?, years = ?, semesters = ?, updated_by = ? WHERE id = ?', [course_type, course_name, years, semesters, request.user.id, id]);
       return new Courses(id, course_type, course_name, years, semesters);
     } finally {
       await connection.end();

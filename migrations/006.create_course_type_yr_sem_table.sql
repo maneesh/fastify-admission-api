@@ -5,6 +5,6 @@ CREATE TABLE course_type_yr_sem (
   display_name VARCHAR(255) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  created_by VARCHAR(255),
-  updated_by VARCHAR(255)
+  created_by INTEGER,
+  updated_by INTEGER
 );

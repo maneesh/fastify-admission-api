@@ -44,15 +44,16 @@ class CustDetails {
     }
   }
 
-  static async create(cust_id, domain, api_key, active_session) {
+  static async create(cust_id, domain, api_key, active_session, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
       password: config.password,
-      database: config.database
+      database: config.database,
+      multipleStatements: true
     });
     try {
-      const [result] = await connection.execute('INSERT INTO cust_details (cust_id, domain, api_key, active_session) VALUES (?, ?, ?, ?)', [cust_id, domain, api_key, active_session]);
+      const [result] = await connection.execute('INSERT INTO cust_details (cust_id, domain, api_key, active_session, created_by) VALUES (?, ?, ?, ?, ?); SELECT LAST_INSERT_ID();', [cust_id, domain, api_key, active_session, request.user.id]);
       const id = result[0].insertId;
       return new CustDetails(id, cust_id, domain, api_key, active_session);
     } finally {
@@ -60,7 +61,7 @@ class CustDetails {
     }
   }
 
-  static async update(id, cust_id, domain, api_key, active_session) {
+  static async update(id, cust_id, domain, api_key, active_session, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
@@ -68,7 +69,7 @@ class CustDetails {
       database: config.database
     });
     try {
-      await connection.execute('UPDATE cust_details SET cust_id = ?, domain = ?, api_key = ?, active_session = ? WHERE id = ?', [cust_id, domain, api_key, active_session, id]);
+      await connection.execute('UPDATE cust_details SET cust_id = ?, domain = ?, api_key = ?, active_session = ?, updated_by = ? WHERE id = ?', [cust_id, domain, api_key, active_session, request.user.id, id]);
       return new CustDetails(id, cust_id, domain, api_key, active_session);
     } finally {
       await connection.end();

@@ -22,7 +22,9 @@ INSERT INTO saas_student_detail (
   aadhar_number,
   guardian_mobile_number,
   created_at,
-  updated_at
+  updated_at,
+  created_by,
+  updated_by
 ) VALUES (
   1,
   1,
@@ -47,5 +49,7 @@ INSERT INTO saas_student_detail (
   '123456789012',
   '9876543210',
   NOW(),
-  NOW()
+  NOW(),
+  1,
+  1
 );

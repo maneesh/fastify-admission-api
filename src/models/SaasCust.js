@@ -41,15 +41,16 @@ class SaasCust {
     }
   }
 
-  static async create(name) {
+  static async create(name, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
       password: config.password,
-      database: config.database
+      database: config.database,
+      multipleStatements: true
     });
     try {
-      const [result] = await connection.execute('INSERT INTO saas_cust (name) VALUES (?)', [name]);
+      const [result] = await connection.execute('INSERT INTO saas_cust (name, created_by) VALUES (?, ?); SELECT LAST_INSERT_ID();', [name, request.user.id]);
       const id = result.insertId;
       return new SaasCust(id, name);
     } finally {
@@ -57,7 +58,7 @@ class SaasCust {
     }
   }
 
-  static async update(id, name) {
+  static async update(id, name, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
@@ -65,7 +66,7 @@ class SaasCust {
       database: config.database
     });
     try {
-      await connection.execute('UPDATE saas_cust SET name = ? WHERE id = ?', [name, id]);
+      await connection.execute('UPDATE saas_cust SET name = ?, updated_by = ? WHERE id = ?', [name, request.user.id, id]);
       return new SaasCust(id, name);
     } finally {
       await connection.end();

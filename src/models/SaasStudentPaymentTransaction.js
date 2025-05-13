@@ -46,15 +46,16 @@ class SaasStudentPaymentTransaction {
     }
   }
 
-  static async create(register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id) {
+  static async create(register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
       password: config.password,
-      database: config.database
+      database: config.database,
+      multipleStatements: true
     });
     try {
-      const [result] = await connection.execute('INSERT INTO saas_student_payment_transaction (register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id) VALUES (?, ?, ?, ?, ?, ?)', [register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id]);
+      const [result] = await connection.execute('INSERT INTO saas_student_payment_transaction (register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id, created_by) VALUES (?, ?, ?, ?, ?, ?, ?); SELECT LAST_INSERT_ID();', [register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id, request.user.id]);
       const id = result[0].insertId;
       return new SaasStudentPaymentTransaction(id, register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id);
     } finally {
@@ -62,7 +63,7 @@ class SaasStudentPaymentTransaction {
     }
   }
 
-  static async update(id, register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id) {
+  static async update(id, register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
@@ -70,7 +71,7 @@ class SaasStudentPaymentTransaction {
       database: config.database
     });
     try {
-      await connection.execute('UPDATE saas_student_payment_transaction SET register_student_id = ?, start_date_time = ?, gateway_transaction_id = ?, status = ?, amount = ?, fee_id = ? WHERE id = ?', [register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id, id]);
+      await connection.execute('UPDATE saas_student_payment_transaction SET register_student_id = ?, start_date_time = ?, gateway_transaction_id = ?, status = ?, amount = ?, fee_id = ?, updated_by = ? WHERE id = ?', [register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id, request.user.id, id]);
       return new SaasStudentPaymentTransaction(id, register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id);
     } finally {
       await connection.end();

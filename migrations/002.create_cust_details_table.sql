@@ -6,6 +6,6 @@ CREATE TABLE cust_details (
   active_session INT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  created_by VARCHAR(255),
-  updated_by VARCHAR(255)
+  created_by INTEGER,
+  updated_by INTEGER
 );

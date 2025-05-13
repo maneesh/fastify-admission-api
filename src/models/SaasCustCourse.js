@@ -44,19 +44,20 @@ class SaasCustCourse {
       await connection.end();
     }
   }
-  static async create(saas_cust_id, course_id, course_display, year_sem_type, reg_enabled) {
+  static async create(saas_cust_id, course_id, course_display, year_sem_type, reg_enabled, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
       password: config.password,
-      database: config.database
+      database: config.database,
+      multipleStatements: true
     });
 
     try {
       const [result] = await connection.execute(`
-        INSERT INTO saas_cust_course (saas_cust_id, course_id, course_display, year_sem_type, reg_enabled) 
-        VALUES (?, ?, ?, ?, ?)`,
-        [saas_cust_id, course_id, course_display, year_sem_type, reg_enabled]
+        INSERT INTO saas_cust_course (saas_cust_id, course_id, course_display, year_sem_type, reg_enabled, created_by)
+        VALUES (?, ?, ?, ?, ?, ?)`,
+        [saas_cust_id, course_id, course_display, year_sem_type, reg_enabled, request.user.id]
       );
 
       const id = result?.insertId;
@@ -69,7 +70,7 @@ class SaasCustCourse {
 
 
 
-  static async update(id, saas_cust_id, course_id, course_display, year_sem_type) {
+  static async update(id, saas_cust_id, course_id, course_display, year_sem_type, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
@@ -79,10 +80,10 @@ class SaasCustCourse {
   
     try {
       await connection.execute(
-        `UPDATE saas_cust_course 
-         SET saas_cust_id = ?, course_id = ?, course_display = ?, year_sem_type = ?
+        `UPDATE saas_cust_course
+         SET saas_cust_id = ?, course_id = ?, course_display = ?, year_sem_type = ?, updated_by = ?
          WHERE id = ?`,
-        [saas_cust_id, course_id, course_display, year_sem_type,id]
+        [saas_cust_id, course_id, course_display, year_sem_type, request.user.id, id]
       );
   
       return {

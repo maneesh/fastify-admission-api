@@ -42,15 +42,16 @@ class CourseTypes {
     }
   }
 
-  static async create(name, short_name) {
+  static async create(name, short_name, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
       password: config.password,
-      database: config.database
+      database: config.database,
+      multipleStatements: true
     });
     try {
-      const [result] = await connection.execute('INSERT INTO course_types (name, short_name) VALUES (?, ?)', [name, short_name]);
+      const [result] = await connection.execute('INSERT INTO course_types (name, short_name, created_by) VALUES (?, ?, ?); SELECT LAST_INSERT_ID();', [name, short_name, request.user.id]);
       const id = result[0].insertId;
       return new CourseTypes(id, name, short_name);
     } finally {
@@ -58,7 +59,7 @@ class CourseTypes {
     }
   }
 
-  static async update(id, name, short_name) {
+  static async update(id, name, short_name, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
@@ -66,7 +67,7 @@ class CourseTypes {
       database: config.database
     });
     try {
-      await connection.execute('UPDATE course_types SET name = ?, short_name = ? WHERE id = ?', [name, short_name, id]);
+      await connection.execute('UPDATE course_types SET name = ?, short_name = ?, updated_by = ? WHERE id = ?', [name, short_name, request.user.id, id]);
       return new CourseTypes(id, name, short_name);
     } finally {
       await connection.end();

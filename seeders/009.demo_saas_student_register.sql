@@ -1,4 +1,4 @@
 INSERT INTO saas_student_register (cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num, created_by, updated_by, created_at, updated_at) VALUES
-(1, 1, 1, 1, 'Aryan Sharma', 'aryan.sharma@example.com', '1234567890', '2000-01-01', 'Mr. Sharma', 'Mrs. Sharma', 'REG123', 'Utkarsh', 'Utkarsh', NOW(), NOW()),
-(2, 2, 2, 2, 'Priya Verma', 'priya.verma@example.com', '9876543210', '2001-02-02', 'Mr. Verma', 'Mrs. Verma', 'REG456', 'Utkarsh', 'Utkarsh', NOW(), NOW()),
-(1, 3, 3, 3, ' Rohan Kapoor', 'rohan.kapoor@example.com', '5551234567', '2002-03-03', 'Mr. Kapoor', 'Mrs. Kapoor', 'REG789', 'Utkarsh', 'Utkarsh', NOW(), NOW());
+(1, 1, 1, 1, 'Aryan Sharma', 'aryan.sharma@example.com', '1234567890', '2000-01-01', 'Mr. Sharma', 'Mrs. Sharma', 'REG123', 1, 1, NOW(), NOW()),
+(2, 2, 2, 2, 'Priya Verma', 'priya.verma@example.com', '9876543210', '2001-02-02', 'Mr. Verma', 'Mrs. Verma', 'REG456', 1, 1, NOW(), NOW()),
+(1, 3, 3, 3, ' Rohan Kapoor', 'rohan.kapoor@example.com', '5551234567', '2002-03-03', 'Mr. Kapoor', 'Mrs. Kapoor', 'REG789', 1, 1, NOW(), NOW());

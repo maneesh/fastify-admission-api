@@ -27,14 +27,15 @@ class User {
     }
   }
 
-  static async create({ fullname, email, password, mobile, role_id }) {
+  static async create({ fullname, email, password, mobile, role_id }, request) {
     let connection;
     try {
       connection = await mysql.createConnection({
         host: config.host,
         user: config.username,
         password: config.password,
-        database: config.database
+        database: config.database,
+        multipleStatements: true
       });
       const existing = await this.findByEmail(email);
       if (existing) {
@@ -44,10 +45,10 @@ class User {
       const hashedPassword = await bcrypt.hash(password, 10);
   
       const [result] = await connection.execute(
-        'INSERT INTO user (fullname, email, password, mobile, role_id) VALUES (?, ?, ?, ?, ?)',
-        [fullname, email, hashedPassword, mobile, role_id]
+        'INSERT INTO user (fullname, email, password, mobile, role_id, created_by) VALUES (?, ?, ?, ?, ?, ?); SELECT LAST_INSERT_ID();',
+        [fullname, email, hashedPassword, mobile, role_id, request.user.id]
       );
-      const myId = result.insertId;
+      const myId = result[0].insertId;
 
       return {
        id: myId,

@@ -55,15 +55,19 @@ class SaasStudentRegister {
     }
   }
 
-    static async create(cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num) {
+    static async create(cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
       password: config.password,
-      database: config.database
+      database: config.database,
+      multipleStatements: true
     });
     try {
-      const [result] = await connection.execute('INSERT INTO saas_student_register (cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num]);
+      const [result] = await connection.execute(
+        'INSERT INTO saas_student_register (cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); SELECT LAST_INSERT_ID();',
+        [cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num, request.user.id]
+      );
       const id = result[0].insertId;
       return new SaasStudentRegister(id, cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num);
     } finally {
@@ -71,7 +75,7 @@ class SaasStudentRegister {
     }
   }
 
-  static async update(id, cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num) {
+  static async update(id, cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
@@ -79,7 +83,10 @@ class SaasStudentRegister {
       database: config.database
     });
     try {
-      await connection.execute('UPDATE saas_student_register SET cust_id = ?, course_id = ?, year_sem_id = ?, register_session = ?, full_name = ?, email = ?, mobile = ?, date_of_birth = ?, father_name = ?, mother_name = ?, registration_num = ? WHERE id = ?', [cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num, id]);
+      await connection.execute(
+        'UPDATE saas_student_register SET cust_id = ?, course_id = ?, year_sem_id = ?, register_session = ?, full_name = ?, email = ?, mobile = ?, date_of_birth = ?, father_name = ?, mother_name = ?, registration_num = ?, updated_by = ? WHERE id = ?',
+        [cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num, request.user.id, id]
+      );
     return new SaasStudentRegister(id, cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num);
     } finally {
       await connection.end();

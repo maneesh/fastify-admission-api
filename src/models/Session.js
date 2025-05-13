@@ -44,15 +44,16 @@ class Session {
     }
   }
 
-  static async create(academic_year, admission_type, start, end) {
+  static async create(academic_year, admission_type, start, end, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
       password: config.password,
-      database: config.database
+      database: config.database,
+      multipleStatements: true
     });
     try {
-      const [result] = await connection.execute('INSERT INTO session (academic_year, admission_type, start, end) VALUES (?, ?, ?, ?)', [academic_year, admission_type, start, end]);
+      const [result] = await connection.execute('INSERT INTO session (academic_year, admission_type, start, end, created_by) VALUES (?, ?, ?, ?, ?); SELECT LAST_INSERT_ID();', [academic_year, admission_type, start, end, request.user.id]);
       const id = result[0].insertId;
       return new Session(id, academic_year, admission_type, start, end);
     } finally {
@@ -60,7 +61,7 @@ class Session {
     }
   }
 
-  static async update(id, academic_year, admission_type, start, end) {
+  static async update(id, academic_year, admission_type, start, end, request) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
@@ -68,7 +69,7 @@ class Session {
       database: config.database
     });
     try {
-      await connection.execute('UPDATE session SET academic_year = ?, admission_type = ?, start = ?, end = ? WHERE id = ?', [academic_year, admission_type, start, end, id]);
+      await connection.execute('UPDATE session SET academic_year = ?, admission_type = ?, start = ?, end = ?, updated_by = ? WHERE id = ?', [academic_year, admission_type, start, end, request.user.id, id]);
       return new Session(id, academic_year, admission_type, start, end);
     } finally {
       await connection.end();
