@@ -57,13 +57,28 @@ class SaasCustCourse {
       const [result] = await connection.execute(`
         INSERT INTO saas_cust_course (saas_cust_id, course_id, course_display, year_sem_type, reg_enabled, created_by)
         VALUES (?, ?, ?, ?, ?, ?)`,
-        [saas_cust_id, course_id, course_display, year_sem_type, reg_enabled, request.user.id]
+        [saas_cust_id, course_id, course_display, year_sem_type, reg_enabled, request?.user?.user_id]
       );
 
       const id = result?.insertId;
 
-      return new SaasCustCourse(id, saas_cust_id, course_id, course_display, year_sem_type, reg_enabled);
-    } finally {
+      const [rows] = await connection.execute(`
+        SELECT 
+          scc.id AS saas_cust_course_id,
+          scc.course_id,
+          c.course_name,
+          ct.id AS course_type_id,
+          ct.name AS course_type,
+          scc.course_display,
+          scc.year_sem_type,
+          scc.reg_enabled
+        FROM saas_cust_course scc
+        JOIN courses c ON c.id = scc.course_id
+        JOIN course_types ct ON ct.id = c.course_type
+        WHERE scc.id = ?
+      `, [id]);
+
+      return rows[0];  } finally {
       await connection.end();
     }
   }
@@ -83,7 +98,7 @@ class SaasCustCourse {
         `UPDATE saas_cust_course
          SET saas_cust_id = ?, course_id = ?, course_display = ?, year_sem_type = ?, updated_by = ?
          WHERE id = ?`,
-        [saas_cust_id, course_id, course_display, year_sem_type, request.user.id, id]
+        [saas_cust_id, course_id, course_display, year_sem_type, request?.user?.user_id, id]
       );
   
       return {

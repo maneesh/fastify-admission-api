@@ -22,7 +22,9 @@ const start = async () => {
   try {
     // Register CORS
     await fastify.register(cors, {
-      origin: true 
+      origin: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      credentials: true
     });
 
     // Register all routes under /saas prefix

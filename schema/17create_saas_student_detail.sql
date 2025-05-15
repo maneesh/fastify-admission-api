@@ -1,0 +1,30 @@
+-- Create the saas_student_detail table
+USE manage_admission;
+CREATE TABLE saas_student_detail (
+  student_id INT NOT NULL,
+  course_id INT NOT NULL,
+  year_id INT NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  father_name VARCHAR(100) NOT NULL,
+  mother_name VARCHAR(100) NOT NULL,
+  mobile_number VARCHAR(15) NOT NULL UNIQUE,
+  dob DATE NOT NULL,
+  email VARCHAR(100) NOT NULL,
+  category VARCHAR(50) NOT NULL,
+  ews VARCHAR(10) NOT NULL,
+  nationality VARCHAR(50) NOT NULL,
+  religion VARCHAR(50) NOT NULL,
+  residence_type VARCHAR(20) NOT NULL,
+  parent_annual_income VARCHAR(20) NOT NULL,
+  permanent_address TEXT NOT NULL,
+  pincode VARCHAR(10) NOT NULL,
+  country VARCHAR(50) NOT NULL,
+  state VARCHAR(50) NOT NULL,
+  district VARCHAR(50) NOT NULL,
+  aadhar_number VARCHAR(20) NOT NULL,
+  guardian_mobile_number VARCHAR(15) NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  created_by INT NOT NULL,
+  updated_by INT NOT NULL
+);

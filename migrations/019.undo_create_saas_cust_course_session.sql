@@ -1,0 +1,1 @@
+DROP TABLE saas_cust_course_session;
