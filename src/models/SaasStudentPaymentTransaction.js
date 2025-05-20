@@ -1,11 +1,12 @@
 const mysql = require('mysql2/promise');
+const { formatDateToDDMMYYYY } = require('../utils/index.js');
 const config = require('../../config/config.js')['development'];
 
 class SaasStudentPaymentTransaction {
   constructor(id, register_student_id, start_date_time, gateway_transaction_id, status, amount, fee_id) {
     this.id = id;
     this.register_student_id = register_student_id;
-    this.start_date_time = start_date_time;
+    this.start_date_time = formatDateToDDMMYYYY(start_date_time);
     this.gateway_transaction_id = gateway_transaction_id;
     this.status = status;
     this.amount = amount;

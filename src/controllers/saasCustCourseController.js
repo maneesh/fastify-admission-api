@@ -41,6 +41,9 @@ exports.createSaasCustCourse = async (req, res) => {
     res.status(200).send(saasCustCourse);
   } catch (err) {
     console.error(err);
+    if (err.message === 'Course name already exists.') {
+      return res.status(400).send({ message: err.message });
+    }
     res.status(500).send({message: 'Error creating saas cust course'});
   }
 };
@@ -63,6 +66,9 @@ exports.updateSaasCustCourse = async (req, res) => {
     res.send(saasCustCourse);
   } catch (err) {
     console.error(err);
+    if (err.message === 'Course name already exists.') {
+      return res.status(400).send({ message: err.message });
+    }
     res.status(500).send({message: 'Error updating saas cust course'});
   }
 };

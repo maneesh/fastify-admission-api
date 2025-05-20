@@ -52,16 +52,25 @@ class SaasCustCourse {
       database: config.database,
       multipleStatements: true
     });
-
+  
     try {
+      // Check if course_display already exists for the customer
+      const [existing] = await connection.execute(`
+        SELECT id FROM saas_cust_course WHERE saas_cust_id = ? AND course_display = ?
+      `, [saas_cust_id, course_display]);
+  
+      if (existing.length > 0) {
+        throw new Error('Course name already exists.');
+      }
+  
       const [result] = await connection.execute(`
         INSERT INTO saas_cust_course (saas_cust_id, course_id, course_display, year_sem_type, reg_enabled, created_by)
         VALUES (?, ?, ?, ?, ?, ?)`,
         [saas_cust_id, course_id, course_display, year_sem_type, reg_enabled, request?.user?.user_id]
       );
-
+  
       const id = result?.insertId;
-
+  
       const [rows] = await connection.execute(`
         SELECT 
           scc.id AS saas_cust_course_id,
@@ -77,11 +86,13 @@ class SaasCustCourse {
         JOIN course_types ct ON ct.id = c.course_type
         WHERE scc.id = ?
       `, [id]);
-
-      return rows[0];  } finally {
+  
+      return rows[0];
+    } finally {
       await connection.end();
     }
   }
+  
 
 
 
@@ -94,6 +105,16 @@ class SaasCustCourse {
     });
   
     try {
+      // Check for duplicate course_display (excluding current record)
+      const [existing] = await connection.execute(`
+        SELECT id FROM saas_cust_course 
+        WHERE saas_cust_id = ? AND course_display = ? AND id != ?
+      `, [saas_cust_id, course_display, id]);
+  
+      if (existing.length > 0) {
+        throw new Error('Course name already exists.');
+      }
+  
       await connection.execute(
         `UPDATE saas_cust_course
          SET saas_cust_id = ?, course_id = ?, course_display = ?, year_sem_type = ?, updated_by = ?

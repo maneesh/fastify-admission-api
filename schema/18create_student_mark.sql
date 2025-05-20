@@ -3,6 +3,7 @@ USE manage_admission;
 
 CREATE TABLE student_mark (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    standard VARCHAR(100),
     board_name VARCHAR(100),
     roll_no VARCHAR(50),
     passing_year YEAR,

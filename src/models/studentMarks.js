@@ -4,6 +4,7 @@ const config = require('../../config/config.js')['development'];
 class StudentMark {
   constructor(
     id,
+    standard,
     student_id,
     board_name,
     roll_no,
@@ -14,6 +15,7 @@ class StudentMark {
     percentage
   ) {
     this.id = id;
+    this.standard = standard;
     this.student_id = student_id;
     this.board_name = board_name;
     this.roll_no = roll_no;
@@ -40,6 +42,7 @@ class StudentMark {
         (row) =>
           new StudentMark(
             row.id,
+            row.standard,
             row.student_id,
             row.board_name,
             row.roll_no,
@@ -74,6 +77,7 @@ class StudentMark {
       const row = rows[0];
       return new StudentMark(
         row.id,
+        row.standard,
         row.student_id,
         row.board_name,
         row.roll_no,
