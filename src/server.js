@@ -17,6 +17,7 @@ const saasStudentRegisterRoutes = require('./routes/saasStudentRegisterRoutes');
 const saasStudentPaymentTransactionRoutes = require('./routes/saasStudentPaymentTransactionRoutes');
 const userRoutes = require('./routes/userLoginRoutes');
 const courseSession = require('./routes/courseSession');
+const excelUpload = require('./routes/excelUploadRoutes');
 
 // Start server inside async function to avoid top-level await
 const start = async () => {
@@ -43,6 +44,7 @@ const start = async () => {
       app.register(saasStudentPaymentTransactionRoutes);
       app.register(userRoutes);
       app.register(courseSession);
+      app.register(excelUpload);
 
       // Optional root route under /saas/
       app.get('/', async () => {
