@@ -18,6 +18,7 @@ const saasStudentPaymentTransactionRoutes = require('./routes/saasStudentPayment
 const userRoutes = require('./routes/userLoginRoutes');
 const courseSession = require('./routes/courseSession');
 const excelUpload = require('./routes/excelUploadRoutes');
+const adminUserRoutes = require('./routes/adminUserRoutes');
 
 // Start server inside async function to avoid top-level await
 const start = async () => {
@@ -52,6 +53,15 @@ const start = async () => {
       });
     }, { prefix: '/saas' });
 
+
+     fastify.register(async function (app) {
+      app.register(adminUserRoutes);
+
+      // Optional root route under /saas/
+      app.get('/', async () => {
+        return { hello: 'world' };
+      });
+    }, { prefix: '/adm-api' });
     // Start server
     await fastify.listen({ port: 3000 });
   } catch (err) {

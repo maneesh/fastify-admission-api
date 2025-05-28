@@ -3,4 +3,5 @@ INSERT INTO role (name, app_type_id, created_by, updated_by, created_at, updated
 ('Admin', 2, 1, 1, NOW(), NOW()),
 ('Group_Admin', 2, 1, 1, NOW(), NOW()),
 ('Admission_Admin', 1, 1, 1, NOW(), NOW()),
-('Admission_Opr', 1, 1, 1, NOW(), NOW());
+('Admission_Opr', 1, 1, 1, NOW(), NOW()),
+('Admin', 1, 1, 1, NOW(), NOW());

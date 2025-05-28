@@ -5,4 +5,6 @@ INSERT INTO feature (name, uri, app_type, created_by, updated_by, created_at, up
 ('Manage Locality', '/manage-locality', 1, 1, 1, NOW(), NOW()),
 ('Manage Student', '/manage-student', 1, 1, 1, NOW(), NOW()),
 ('Manage Fees', '/manage-fees', 1, 1, 1, NOW(), NOW()),
-('Manage Admission', '/manage-admission', 1, 1, 1, NOW(), NOW());
+('Manage Admission', '/manage-admission', 1, 1, 1, NOW(), NOW()),
+('Dashboard', '/dashboard', 2, 1, 1, NOW(), NOW()),
+('Manage Admission', '/manage-admission', 2, 1, 1, NOW(), NOW());

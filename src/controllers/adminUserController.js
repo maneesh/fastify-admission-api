@@ -1,10 +1,8 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User.js");
-const SaasCust = require("../models/SaasCust");
-const JWT_SECRET = process.env.JWT_SECRET || "yourSuperSecretKey12345";
+const JWT_SECRET = process.env.JWT_SECRET_ADMIN || "yourSuperSecretKey987666";
 const connection = require("../db/connection");
-const SaasCustUser = require("../models/SaasCustUser.js");
 
 // GET all users
 exports.getAllUsers = async (req, res) => {
@@ -17,52 +15,7 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// CREATE a user
-exports.createUser = async (req, res) => {
-  try {
-    const { fullname = "", email, mobile, name } = req.body;
 
-    const existingUser = await User.findByEmail(email);
-    if (existingUser) {
-      return res.status(400).send({ message: "Email already exists" });
-    }
-
-    const password = "Ravi@555";
-    const role_id = 2;
-
-    const newUser = await User.create(
-      {
-        fullname,
-        email,
-        password,
-        mobile,
-        role_id,
-      },
-      req
-    );
-    const newSaasCust = await SaasCust.create(name, req);
-
-    const newSaasCustUser = await SaasCustUser.create(
-      {
-        user_id: newUser.id,
-        saas_cust_id: newSaasCust.id,
-      },
-      req
-    );
-    console.log("Created SaasCustUser:", newSaasCustUser);
-    console.log("Created SaasCust:", newSaasCust);
-    res.status(200).send({
-      message: "User created successfully",
-      user: newUser,
-      //saasCust: newSaasCust
-    });
-  } catch (err) {
-    console.error("Create User Error:", err.message);
-    res
-      .status(500)
-      .send({ message: "Error creating user", error: err.message });
-  }
-};
 
 // LOGIN user
 exports.loginUser = async (req, res) => {
@@ -124,7 +77,7 @@ exports.loginUser = async (req, res) => {
         mobile: user.mobile,
         role_id: user.role_id,
         name: user.name,
-        cust_id: extraInfo.cust_id,
+       cust_id: extraInfo.cust_id,
         role_name: extraInfo.role_name,
         school_name: extraInfo.school_name,
         features: features.map((f) => f.name),
