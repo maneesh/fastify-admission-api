@@ -19,6 +19,7 @@ const userRoutes = require('./routes/userLoginRoutes');
 const courseSession = require('./routes/courseSession');
 const excelUpload = require('./routes/excelUploadRoutes');
 const adminUserRoutes = require('./routes/adminUserRoutes');
+const adminCourseTypeRoutes = require('./routes/adminCourseTypeRoutes');
 
 // Start server inside async function to avoid top-level await
 const start = async () => {
@@ -56,6 +57,7 @@ const start = async () => {
 
      fastify.register(async function (app) {
       app.register(adminUserRoutes);
+      app.register(adminCourseTypeRoutes);
 
       // Optional root route under /saas/
       app.get('/', async () => {
