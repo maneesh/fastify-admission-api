@@ -11,20 +11,44 @@ class SaasCustCourse {
     this.reg_enabled = reg_enabled;
   }
 
-  static async getAll() {
-    const connection = await mysql.createConnection({
-      host: config.host,
-      user: config.username,
-      password: config.password,
-      database: config.database
-    });
-    try {
-      const [rows] = await connection.execute('SELECT * FROM saas_cust_course');
-      return rows.map(row => new SaasCustCourse(row.id, row.saas_cust_id, row.course_id, row.course_display, row.year_sem_type, row.reg_enabled));
-    } finally {
-      await connection.end();
-    }
+ static async getAll() {
+  const connection = await mysql.createConnection({
+    host: config.host,
+    user: config.username,
+    password: config.password,
+    database: config.database
+  });
+
+  try {
+    const [rows] = await connection.execute(`
+      SELECT 
+        scc.id AS id,
+        scc.saas_cust_id,
+        scc.course_id,
+        scc.course_display,
+        scc.year_sem_type,
+        scc.reg_enabled,
+        c.course_name
+      FROM 
+        saas_cust_course scc
+      JOIN 
+        courses c ON scc.course_id = c.id
+    `);
+
+    return rows.map(row => ({
+      id: row.id,
+      saas_cust_id: row.saas_cust_id,
+      course_id: row.course_id,
+      course_display: row.course_display,
+      year_sem_type: row.year_sem_type,
+      reg_enabled: row.reg_enabled,
+      course_name: row.course_name // ✅ Ensure this is included
+    }));
+  } finally {
+    await connection.end();
   }
+}
+
 
   static async getById(id) {
     const connection = await mysql.createConnection({
