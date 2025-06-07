@@ -4,8 +4,9 @@ const auth = require('../middleware/auth');
 
 async function userRoutes (fastify, options) {
   fastify.get('/users',{ preHandler: auth }, userController.getAllUsers);
-    fastify.post('/cust-create', (req, res) => userController.createUser(req, res));
-    fastify.post('/cust-user-login', userController.loginUser);
+  fastify.post('/cust-create', (req, res) => userController.createUser(req, res));
+  fastify.post('/cust-user-login', userController.loginUser);
+  fastify.put('/cust-user-login/:id', userController.updateUser);
   }
 
 module.exports = userRoutes;

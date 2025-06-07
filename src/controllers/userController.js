@@ -64,6 +64,43 @@ exports.createUser = async (req, res) => {
   }
 };
 
+exports.updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { fullname, email, mobile, password } = req.body;
+
+    // Check if user exists
+    const existingUser = await User.findById(id);
+    if (!existingUser) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    // Check if email already belongs to another user
+    const emailOwner = await User.findByEmail(email);
+    if (emailOwner && emailOwner.id !== parseInt(id)) {
+      return res.status(400).send({ message: "Email already exists" });
+    }
+
+    // Update user (role is not updated)
+    const updatedUser = await User.update(
+      { id, fullname, email, mobile, password },
+      req
+    );
+
+    res.status(200).send({
+      message: "User updated successfully",
+      user: updatedUser,
+    });
+  } catch (err) {
+    console.error("Update User Error:", err.message);
+    res.status(500).send({
+      message: "Error updating user",
+      error: err.message,
+    });
+  }
+};
+
+
 // LOGIN user
 exports.loginUser = async (req, res) => {
   try {
@@ -120,6 +157,7 @@ exports.loginUser = async (req, res) => {
       user: {
         id: user.id,
         fullname: user.fullname,
+        password:user.password,
         email: user.email,
         mobile: user.mobile,
         role_id: user.role_id,
