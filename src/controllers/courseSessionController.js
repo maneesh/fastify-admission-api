@@ -41,3 +41,12 @@ exports.createCourseSession = async (req, res) => {
     }
   };
   
+  exports.deleteCourseSession = async (req, res) => {
+  try {
+    await CourseSession.delete(req.params.id);
+    res.status(200).send({message:'deleted successfully'});
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: 'Error deleting course session' });
+  }
+};

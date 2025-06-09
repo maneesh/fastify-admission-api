@@ -110,6 +110,20 @@ class CourseSession {
     }
   }
   
+
+  static async delete(id) {
+      const connection = await mysql.createConnection({
+        host: config.host,
+        user: config.username,
+        password: config.password,
+        database: config.database
+      });
+      try {
+        await connection.execute('DELETE FROM saas_cust_course_session WHERE id = ?', [id]);
+      } finally {
+        await connection.end();
+      }
+    }
 }
 
 module.exports = CourseSession;
