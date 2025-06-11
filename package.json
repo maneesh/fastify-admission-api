@@ -23,6 +23,7 @@
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.14.1",
     "postgrator": "^8.0.0",
+    "razorpay": "^2.9.6",
     "sequelize": "^6.37.7",
     "xlsx": "^0.18.5",
     "xlsx-populate": "^1.21.0"

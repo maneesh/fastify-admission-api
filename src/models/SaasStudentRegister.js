@@ -55,25 +55,127 @@ class SaasStudentRegister {
     }
   }
 
-    static async create(cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num, request) {
+   static async create(cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num) {
     const connection = await mysql.createConnection({
       host: config.host,
       user: config.username,
       password: config.password,
-      database: config.database,
-      multipleStatements: true
+      database: config.database
     });
+
     try {
       const [result] = await connection.execute(
-        'INSERT INTO saas_student_register (cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); SELECT LAST_INSERT_ID();',
-        [cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num, request.user.id]
+        `INSERT INTO saas_student_register 
+        (cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num, created_by) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+        [cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num, 1] // static created_by = 1
       );
-      const id = result[0].insertId;
+
+      const id = result.insertId;
       return new SaasStudentRegister(id, cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num);
     } finally {
       await connection.end();
     }
   }
+
+  static async findByMobile(mobile) {
+    const connection = await mysql.createConnection(config);
+    const [rows] = await connection.execute(
+      'SELECT id FROM saas_student_register WHERE mobile = ?',
+      [mobile]
+    );
+    await connection.end();
+    return rows[0];
+  }
+
+  static async getAllSessions() {
+    const connection = await mysql.createConnection(config);
+    const [rows] = await connection.execute('SELECT * FROM session');
+    await connection.end();
+    return rows;
+  }
+
+  static async getCourseById(course_id) {
+    const connection = await mysql.createConnection(config);
+    const [rows] = await connection.execute('SELECT course_name FROM courses WHERE id = ?', [course_id]);
+    await connection.end();
+    return rows[0];
+  }
+
+  static async countStudentsByYear(year) {
+    const connection = await mysql.createConnection(config);
+    const [rows] = await connection.execute(
+      'SELECT COUNT(*) AS count FROM saas_student_register WHERE registration_num LIKE ?',
+      [`BPG${year}%`]
+    );
+    await connection.end();
+    return rows[0].count;
+  }
+
+  // Check for duplicate mobile
+  static async findByMobile(mobile) {
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
+
+    const [rows] = await connection.execute(
+      'SELECT id FROM saas_student_register WHERE mobile = ?',
+      [mobile]
+    );
+
+    await connection.end();
+    return rows[0];
+  }
+
+  // Get all session rows
+  static async getAllSessions() {
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
+
+    const [rows] = await connection.execute('SELECT * FROM session');
+    await connection.end();
+    return rows;
+  }
+
+  // Get course info by ID
+  static async getCourseById(course_id) {
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
+
+    const [rows] = await connection.execute('SELECT course_name FROM courses WHERE id = ?', [course_id]);
+    await connection.end();
+    return rows[0];
+  }
+
+  // Count students by admission year
+  static async countStudentsByYear(year) {
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+      database: config.database
+    });
+
+    const [rows] = await connection.execute(
+      `SELECT COUNT(*) AS count FROM saas_student_register WHERE registration_num LIKE ?`,
+      [`BPG${year}%`]
+    );
+
+    await connection.end();
+    return rows[0].count;
+  }
+
 
   static async update(id, cust_id, course_id, year_sem_id, register_session, full_name, email, mobile, date_of_birth, father_name, mother_name, registration_num, request) {
     const connection = await mysql.createConnection({

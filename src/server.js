@@ -20,6 +20,9 @@ const courseSession = require('./routes/courseSession');
 const excelUpload = require('./routes/excelUploadRoutes');
 const adminUserRoutes = require('./routes/adminUserRoutes');
 const adminCourseTypeRoutes = require('./routes/adminCourseTypeRoutes');
+const paymentRoutes = require('./routes/saasPayment');
+const admStudentRoutes = require('./routes/admStudentRoutes');
+const admCourseFee = require('./routes/admCourseFeeRoutes');
 
 // Start server inside async function to avoid top-level await
 const start = async () => {
@@ -47,6 +50,7 @@ const start = async () => {
       app.register(userRoutes);
       app.register(courseSession);
       app.register(excelUpload);
+      app.register(paymentRoutes);
 
       // Optional root route under /saas/
       app.get('/', async () => {
@@ -58,14 +62,15 @@ const start = async () => {
      fastify.register(async function (app) {
       app.register(adminUserRoutes);
       app.register(adminCourseTypeRoutes);
-
+      app.register(admStudentRoutes);
+      app.register(admCourseFee);
       // Optional root route under /saas/
       app.get('/', async () => {
         return { hello: 'world' };
       });
     }, { prefix: '/adm-api' });
     // Start server
-    await fastify.listen({ port: 3000 });
+    await fastify.listen({ port: 8080 });
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

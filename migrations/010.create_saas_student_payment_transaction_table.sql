@@ -6,6 +6,7 @@ CREATE TABLE saas_student_payment_transaction (
   status VARCHAR(255),
   amount DECIMAL(10, 2),
   fee_id INT,
+  order_id VARCHAR(255),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   created_by INTEGER,

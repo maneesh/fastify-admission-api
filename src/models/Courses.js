@@ -22,7 +22,8 @@ class Courses {
       const [rows] = await connection.execute(`
         SELECT 
           c.id,
-          ct.name AS course_type, -- replacing ID with name
+          c.course_type AS course_type,     
+          ct.name AS course_type_name,
           c.course_name,
           c.years,
           c.semesters
@@ -30,9 +31,14 @@ class Courses {
         JOIN course_types ct ON c.course_type = ct.id
       `);
   
-      return rows.map(row => 
-        new Courses(row.id, row.course_type, row.course_name, row.years, row.semesters)
-      );
+        return rows.map(row => ({
+      id: row.id,
+      course_type: row.course_type,                 // Integer
+      course_type_name: row.course_type_name,       // Name for display
+      course_name: row.course_name,
+      years: row.years,
+      semesters: row.semesters
+    }));
     } finally {
       await connection.end();
     }
