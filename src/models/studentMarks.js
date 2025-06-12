@@ -91,6 +91,54 @@ class StudentMark {
       await connection.end();
     }
   }
+
+  static async create(data) {
+  const connection = await mysql.createConnection({
+    host: config.host,
+    user: config.username,
+    password: config.password,
+    database: config.database,
+  });
+
+  try {
+    const {
+      standard,
+      student_id,
+      board_name,
+      roll_no,
+      passing_year,
+      subject_name,
+      max_marks,
+      marks_obtained,
+      percentage,
+    } = data;
+
+    const [result] = await connection.execute(
+      `INSERT INTO student_mark 
+      (standard, student_id, board_name, roll_no, passing_year, subject_name, max_marks, marks_obtained, percentage)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        standard,
+        student_id,
+        board_name,
+        roll_no,
+        passing_year,
+        subject_name,
+        max_marks,
+        marks_obtained,
+        percentage,
+      ]
+    );
+
+    return {
+      id: result.insertId,
+      ...data,
+    };
+  } finally {
+    await connection.end();
+  }
+}
+
 }
 
 module.exports = StudentMark;

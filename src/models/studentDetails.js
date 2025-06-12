@@ -93,43 +93,131 @@ class StudentDetails {
     }
   }
 
-  static async create(student_id, course_id, year_id, name, father_name, mother_name, mobile_number, dob, email, category, ews, nationality, religion, residence_type, parent_annual_income, permanent_address, pincode, country, state, district, aadhar_number, guardian_mobile_number, request) {
-    const connection = await mysql.createConnection({
-      host: config.host,
-      user: config.username,
-      password: config.password,
-      database: config.database,
-      multipleStatements: true
-    });
-    try {
-      const [result] = await connection.execute(
-        'INSERT INTO saas_student_detail (student_id, course_id, year_id, name, father_name, mother_name, mobile_number, dob, email, category, ews, nationality, religion, residence_type, parent_annual_income, permanent_address, pincode, country, state, district, aadhar_number, guardian_mobile_number, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); SELECT LAST_INSERT_ID();',
-        [student_id, course_id, year_id, name, father_name, mother_name, mobile_number, dob, email, category, ews, nationality, religion, residence_type, parent_annual_income, permanent_address, pincode, country, state, district, aadhar_number, guardian_mobile_number, request.user.id]
-      );
-      const id = result[0].insertId;
-      return new StudentDetails(student_id, course_id, year_id, name, father_name, mother_name, mobile_number, dob, email, category, ews, nationality, religion, residence_type, parent_annual_income, permanent_address, pincode, country, state, district, aadhar_number, guardian_mobile_number);
-    } finally {
-      await connection.end();
-    }
-  }
+static async create(data, request) {
+  const connection = await mysql.createConnection({
+    host: config.host,
+    user: config.username,
+    password: config.password,
+    database: config.database
+  });
 
-  static async update(student_id, course_id, year_id, name, father_name, mother_name, mobile_number, dob, email, category, ews, nationality, religion, residence_type, parent_annual_income, permanent_address, pincode, country, state, district, aadhar_number, guardian_mobile_number, request) {
-    const connection = await mysql.createConnection({
-      host: config.host,
-      user: config.username,
-      password: config.password,
-      database: config.database
-    });
-    try {
-      await connection.execute(
-        'UPDATE saas_student_detail SET course_id = ?, year_id = ?, name = ?, father_name = ?, mother_name = ?, mobile_number = ?, dob = ?, email = ?, category = ?, ews = ?, nationality = ?, religion = ?, residence_type = ?, parent_annual_income = ?, permanent_address = ?, pincode = ?, country = ?, state = ?, district = ?, aadhar_number = ?, guardian_mobile_number = ?, updated_by = ? WHERE student_id = ?',
-        [course_id, year_id, name, father_name, mother_name, mobile_number, dob, email, category, ews, nationality, religion, residence_type, parent_annual_income, permanent_address, pincode, country, state, district, aadhar_number, guardian_mobile_number, request.user.id, student_id]
-      );
-      return new StudentDetails(student_id, course_id, year_id, name, father_name, mother_name, mobile_number, dob, email, category, ews, nationality, religion, residence_type, parent_annual_income, permanent_address, pincode, country, state, district, aadhar_number, guardian_mobile_number);
-    } finally {
-      await connection.end();
-    }
+  try {
+    const {
+      student_id,
+      course_id,
+      year_id,
+      name,
+      father_name,
+      mother_name,
+      mobile_number,
+      dob,
+      email,
+      category,
+      ews,
+      nationality,
+      religion,
+      residence_type,
+      parent_annual_income,
+      permanent_address,
+      pincode,
+      country,
+      state,
+      district,
+      aadhar_number,
+      guardian_mobile_number
+    } = data;
+
+    const created_by =  1;
+
+    const [result] = await connection.execute(
+      `INSERT INTO saas_student_detail 
+      (student_id, course_id, year_id, name, father_name, mother_name, mobile_number, dob, email, category, ews, nationality, religion, residence_type, parent_annual_income, permanent_address, pincode, country, state, district, aadhar_number, guardian_mobile_number, created_by)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        student_id, course_id, year_id, name, father_name, mother_name, mobile_number,
+        dob, email, category, ews, nationality, religion, residence_type,
+        parent_annual_income, permanent_address, pincode, country, state, district,
+        aadhar_number, guardian_mobile_number, created_by
+      ]
+    );
+
+    return new StudentDetails(
+      student_id, course_id, year_id, name, father_name, mother_name, mobile_number,
+      dob, email, category, ews, nationality, religion, residence_type,
+      parent_annual_income, permanent_address, pincode, country, state, district,
+      aadhar_number, guardian_mobile_number
+    );
+  } finally {
+    await connection.end();
   }
+}
+
+
+
+ static async update(student_id, data, request) {
+  const connection = await mysql.createConnection({
+    host: config.host,
+    user: config.username,
+    password: config.password,
+    database: config.database
+  });
+
+  try {
+    const {
+      course_id,
+      year_id,
+      name,
+      father_name,
+      mother_name,
+      mobile_number,
+      dob,
+      email,
+      category,
+      ews,
+      nationality,
+      religion,
+      residence_type,
+      parent_annual_income,
+      permanent_address,
+      pincode,
+      country,
+      state,
+      district,
+      aadhar_number,
+      guardian_mobile_number
+    } = data;
+
+    const updated_by =  1;
+
+const [result] = await connection.execute(
+  `UPDATE saas_student_detail SET
+    course_id = ?, year_id = ?, name = ?, father_name = ?, mother_name = ?, mobile_number = ?, dob = ?,
+    email = ?, category = ?, ews = ?, nationality = ?, religion = ?, residence_type = ?, parent_annual_income = ?,
+    permanent_address = ?, pincode = ?, country = ?, state = ?, district = ?, aadhar_number = ?, guardian_mobile_number = ?,
+    updated_by = ?
+   WHERE student_id = ?`,
+  [
+    course_id, year_id, name, father_name, mother_name, mobile_number, dob, email,
+    category, ews, nationality, religion, residence_type, parent_annual_income,
+    permanent_address, pincode, country, state, district, aadhar_number, guardian_mobile_number,
+    updated_by, student_id
+  ]
+);
+
+
+    return result.affectedRows
+      ? new StudentDetails(
+          student_id, course_id, year_id, name, father_name, mother_name, mobile_number,
+          dob, email, category, ews, nationality, religion, residence_type,
+          parent_annual_income, permanent_address, pincode, country, state, district,
+          aadhar_number, guardian_mobile_number
+        )
+      : null;
+  } finally {
+    await connection.end();
+  }
+}
+
 }
 
 module.exports = StudentDetails;

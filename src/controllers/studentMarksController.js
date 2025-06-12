@@ -10,3 +10,18 @@ exports.getAllStudentMarks = async (req, res) => {
     res.status(500).send({ message: 'Error retrieving student marks' });
   }
 };
+
+
+exports.createStudentMark = async (req, res) => {
+  try {
+    const data = req.body;
+    const newMark = await StudentMarks.create(data);
+    res.status(201).send({
+      message: "Student mark added successfully",
+      data: newMark,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Error adding student mark" });
+  }
+};
