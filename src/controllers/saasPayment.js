@@ -1,18 +1,26 @@
 import { CreateRazorpayOrderService, HandlePaymentSuccessService } from "../models/saasPayment.js";
+import Razorpay from 'razorpay';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
 
 export const CreateRazorpayOrderController = async (request, reply) => {
   try {
     const { amount, currency = 'INR', receipt } = request.body;
 
-    if (!amount || !receipt) {
-      return reply.status(400).send({
-        success: false,
-        message: 'Amount and receipt are required',
-      });
+    if (!amount) {
+      return reply.status(400).send({ success: false, message: "Amount is required" });
     }
 
-    const order = await CreateRazorpayOrderService(amount, currency, receipt);
-    return reply.send({ success: true, order });
+    const order = await CreateRazorpayOrderService(razorpay, amount, currency, receipt);
+
+    return reply.send({ success: true, data: order });
   } catch (error) {
     request.log.error(error);
     return reply.status(500).send({
@@ -21,7 +29,6 @@ export const CreateRazorpayOrderController = async (request, reply) => {
     });
   }
 };
-
 
 export const HandlePaymentSuccess = async (request, reply) => {
   try {

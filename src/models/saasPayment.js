@@ -6,7 +6,7 @@ import config from '../../config/config.js';
 
 dotenv.config();
 
-const razorpayInstance = new Razorpay({
+const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
@@ -15,16 +15,16 @@ const razorpayInstance = new Razorpay({
 
 
 
-export const CreateRazorpayOrderService = async (amount, currency, receipt) => {
+export const CreateRazorpayOrderService = async (razorpay, amount, currency, receipt) => {
   const options = {
-    amount: amount * 100, // in paisa
-    currency,
-    receipt,
+    amount: parseInt(amount).toString(), 
+    currency: currency.toString(),
+    receipt: receipt.toString(),
   };
-
-  const order = await razorpayInstance.orders.create(options);
-  return order;
+  console.log("Sending Razorpay Order Payload:", options);
+  return await razorpay.orders.create(options);
 };
+
 
 
 

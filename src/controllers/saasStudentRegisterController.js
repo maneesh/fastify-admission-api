@@ -1,5 +1,13 @@
+const { CreateRazorpayOrderService } = require('../models/saasPayment');
 const SaasStudentRegister = require('../models/SaasStudentRegister');
+const Razorpay = require('razorpay');
+const dotenv = require('dotenv');
 
+dotenv.config();
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 exports.getAllSaasStudentRegisters = async (req, res) => {
   try {
    const cust_id = req?.user?.cust_id;
@@ -77,8 +85,18 @@ exports.createSaasStudentRegister = async (req, res) => {
       mother_name,
       registration_num // ✅ static created_by is handled inside model
     );
-
-    res.status(201).send(saasStudentRegister);
+     
+      
+    const amount = 50*100; // ₹50
+    const currency = "INR";
+    const receipt = saasStudentRegister.registration_num;
+     const razorpayOrder = await CreateRazorpayOrderService(
+      razorpay,
+      amount,
+      currency,
+      receipt
+    );
+    res.status(201).send({saasStudentRegister,razorpayOrder});
   } catch (err) {
     console.error(err);
     res.status(500).send({ message: 'Error creating saas student register' });
