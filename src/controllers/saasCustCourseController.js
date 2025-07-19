@@ -25,7 +25,7 @@ exports.getSaasCustCourseById = async (req, res) => {
 
 exports.createSaasCustCourse = async (req, res) => {
   try {
-    const saas_cust_id = req?.user?.cust_id;  // From auth
+    const saas_cust_id = req.user?.cust_id;  // From auth
     const reg_enabled = true; 
     const { course_id, course_display, year_sem_type } = req.body;
 
@@ -51,7 +51,7 @@ exports.createSaasCustCourse = async (req, res) => {
 exports.updateSaasCustCourse = async (req, res) => {
   try {
     const {id} = req.params;
-    const saas_cust_id = req?.user?.cust_id;
+    const saas_cust_id = req.user?.cust_id;
     const { course_id, course_display, year_sem_type} = req.body;
 
     const saasCustCourse = await SaasCustCourse.update(

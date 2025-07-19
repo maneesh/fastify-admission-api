@@ -25,7 +25,7 @@ exports.getSaasCustCourseFeeById = async (req, res) => {
 
 exports.createSaasCustCourseFee = async (req, res) => {
   try {
-    const saas_cust_id = req?.user?.user_id;
+    const saas_cust_id = req.user?.user_id;
 
     const { fee_type, amount, categery } = req.body;
 
@@ -47,7 +47,7 @@ exports.createSaasCustCourseFee = async (req, res) => {
 
 exports.updateSaasCustCourseFee = async (req, res) => {
   try {
-    const saas_cust_id = req?.user?.user_id;
+    const saas_cust_id = req.user?.user_id;
     const {fee_type, amount, categery} = req.body
     const saasCustCourseFee = await SaasCustCourseFee.update(req.params.id, saas_cust_id, fee_type, amount, categery, req);
     res.send(saasCustCourseFee);

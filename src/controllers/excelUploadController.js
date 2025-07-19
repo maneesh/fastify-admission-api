@@ -4,7 +4,7 @@ const config = require('../../config/config.js')['development'];
 const { validateRow } = require('../utils/validators.js'); 
 
 exports.createExcelUpload = async (req, reply) => {
-  const cust_id = req?.user?.user_id;
+  const cust_id = req.user?.user_id;
 
   let connection;
   try {
